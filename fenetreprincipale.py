@@ -4,12 +4,8 @@ from tkinter import font
 import time
 
 def resize(event):
-
     print(window.winfo_height())
     width = int(window.winfo_width())
-    height = int(width/5*3)
-    
-    window.geometry(f"{width}x{height}+500+100")
     resize.font = font.Font(size=int(window.winfo_width()/15))
     label1.config(font=resize.font)
 
@@ -17,8 +13,8 @@ window = tk.Tk()
 window.title("Spotif'Air")
 window.geometry("500x300+500+100")
 resize.font = ('arial', 10)
-
-
+#window.resizable(width=True, height=False)
+window.aspect(1,1,1,1)
 
 window.grid_rowconfigure(0, weight=1)
 window.grid_columnconfigure(0, weight=1)
