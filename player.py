@@ -15,6 +15,7 @@ def playmusic(file):
     print(file)
     PlaySound(file, SND_FILENAME | SND_ASYNC)
 
+
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
