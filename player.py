@@ -1,6 +1,12 @@
 from tkinter import *
 from winsound import *
 
+
+filename = "wiimusic.wav"
+
+def playmusic(file):
+    PlaySound(file, SND_FILENAME | SND_ASYNC)
+
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
@@ -16,7 +22,7 @@ MusicTitle.grid(row=4,column=1,columnspan=3)
 PreviousMusic = Button(Player,text="Prev")
 PreviousMusic.grid(row=5,column=1)
 
-PausePlay = Button(Player,text="Pause/Play")
+PausePlay = Button(Player,text="Pause/Play",command=lambda:playmusic(filename))
 PausePlay.grid(row=5,column=2)
 
 NextMusic = Button(Player,text="Next")
