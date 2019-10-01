@@ -13,8 +13,6 @@ window = tk.Tk()
 window.title("Spotif'Air")
 window.geometry("500x300+500+100")
 resize.font = ('arial', 10)
-#window.resizable(width=True, height=False)
-window.aspect(1,1,1,1)
 
 window.grid_rowconfigure(0, weight=1)
 window.grid_columnconfigure(0, weight=1)
