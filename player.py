@@ -1,12 +1,17 @@
 from tkinter import *
 from winsound import *
-
+from tkinter import ttk
+import sqlite3
 
 filename = "song/wiimusic.wav"
 
 
 def playmusic(file):
-    file = 'song/'+file+'.wav'
+
+    donnee = (f'{entry1.get()}',)
+    print(donnee)
+    curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", donnee)
+    file = curseur.fetchone()[0]
     print(file)
     PlaySound(file, SND_FILENAME | SND_ASYNC)
 
@@ -17,10 +22,22 @@ Player = Frame(fenetre)
 Player.grid(row=0,column=0)
 
 MusicImage = Canvas(Player,relief = 'sunken')
-MusicImage.grid(row=1,rowspan=3,column=1,columnspan=3)
+MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
 
-entry1 =Entry(Player)
-entry1.grid(row=1,column=2)
+connexion = sqlite3.connect("basededonnees.db")
+curseur = connexion.cursor()
+
+curseur.execute("SELECT Nom FROM Musique")
+resultats = curseur.fetchall()
+morceau = []
+for i in range(len(resultats)):
+    morceau.append(resultats[i][0])
+
+
+
+
+entry1 = ttk.Combobox(Player, values =morceau)
+entry1.grid(row=1, column=2)
 
 
 MusicTitle = Label(Player,text="temporaire")
