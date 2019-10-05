@@ -8,7 +8,7 @@ except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
 
-def playmusic(file):
+def playmusic():
 
     if pygame.mixer.music.get_busy() == False or playmusic.donnee != (f'{entry1.get()}',):
         playmusic.donnee = (f'{entry1.get()}',)
@@ -57,7 +57,7 @@ MusicTitle.grid(row=4,column=1,columnspan=3)
 PreviousMusic = Button(Player,text="Prev")
 PreviousMusic.grid(row=5,column=1)
 
-PausePlay = Button(Player,text="Pause/Play",command=lambda:playmusic(entry1.get()))
+PausePlay = Button(Player,text="Pause/Play",command=lambda:playmusic())
 PausePlay.grid(row=5,column=2)
 
 NextMusic = Button(Player,text="Next")
