@@ -8,16 +8,11 @@ except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
 
-
-
 def playmusic(file):
 
-    if pygame.mixer.music.get_busy() == False:
-
-
-        donnee = (f'{entry1.get()}',)
-        print(donnee)
-        curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", donnee)
+    if pygame.mixer.music.get_busy() == False or playmusic.donnee != (f'{entry1.get()}',):
+        playmusic.donnee = (f'{entry1.get()}',)
+        curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
         file = curseur.fetchone()[0]
         print(file)
         pygame.mixer.music.load(file)
@@ -31,6 +26,7 @@ def playmusic(file):
             playmusic.a = 1
 
 
+playmusic.donnee = ''
 playmusic.a = 0
 pygame.mixer.init()
 fenetre = Tk()
@@ -50,9 +46,6 @@ resultats = curseur.fetchall()
 morceau = []
 for i in range(len(resultats)):
     morceau.append(resultats[i][0])
-
-
-
 
 entry1 = ttk.Combobox(Player, values =morceau)
 entry1.grid(row=1, column=2)
