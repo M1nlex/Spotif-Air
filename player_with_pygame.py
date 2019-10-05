@@ -8,17 +8,30 @@ except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
 
+
+
 def playmusic(file):
 
-    donnee = (f'{entry1.get()}',)
-    print(donnee)
-    curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", donnee)
-    file = curseur.fetchone()[0]
-    print(file)
-    pygame.mixer.music.load(file)
-    pygame.mixer.music.play(loops=0, start=0.0)
+    if pygame.mixer.music.get_busy() == False:
 
 
+        donnee = (f'{entry1.get()}',)
+        print(donnee)
+        curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", donnee)
+        file = curseur.fetchone()[0]
+        print(file)
+        pygame.mixer.music.load(file)
+        pygame.mixer.music.play(loops=0, start=0.0)
+    else:
+        if playmusic.a == 1:
+            pygame.mixer.music.unpause()
+            playmusic.a = 0
+        else:
+            pygame.mixer.music.pause()
+            playmusic.a = 1
+
+
+playmusic.a = 0
 pygame.mixer.init()
 fenetre = Tk()
 fenetre.title("Spotif'Air")
