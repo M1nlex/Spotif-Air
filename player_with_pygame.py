@@ -1,6 +1,8 @@
 from pip._internal import main as pipmain
 from tkinter import *
 from tkinter import ttk
+import time
+import threading
 import sqlite3
 try:
     import pygame
@@ -17,6 +19,8 @@ def playmusic():
         print(file)
         pygame.mixer.music.load(file)
         pygame.mixer.music.play(loops=0, start=0.0)
+        t1 = threading.Thread(target=musiquetime)
+        t1.start()
     else:
         if playmusic.pause:
             pygame.mixer.music.unpause()
@@ -24,6 +28,12 @@ def playmusic():
         else:
             pygame.mixer.music.pause()
             playmusic.pause = True
+
+
+def musiquetime():
+    while pygame.mixer.music.get_busy():
+        currenttime.set(float(pygame.mixer.music.get_pos()/1000))
+        time.sleep(0.1)
 
 
 playmusic.donnee = ''
@@ -46,13 +56,18 @@ resultats = curseur.fetchall()
 morceau = []
 for i in range(len(resultats)):
     morceau.append(resultats[i][0])
-
+currenttime = IntVar()
 entry1 = ttk.Combobox(Player, values =morceau)
 entry1.grid(row=1, column=2)
-
+scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime)
+scaletime.grid(row=3, column=1, columnspan=3)
 
 MusicTitle = Label(Player, text="temporaire")
 MusicTitle.grid(row=4, column=1, columnspan=3)
+
+
+MusicTime = Label(Player, textvariable=currenttime)
+MusicTime.grid(row=4, column=3, columnspan=3)
 
 PreviousMusic = Button(Player, text="Prev")
 PreviousMusic.grid(row=5, column=1)
