@@ -54,6 +54,7 @@ fenetre.title("Spotif'Air")
 Player = Frame(fenetre)
 Player.grid(row=0,column=0)
 
+
 volumecontrol = Scale(Player,from_=100,to=0,orient=VERTICAL,command=set_vol)
 volumecontrol.set(100)
 volumecontrol.grid(row=1,column=4,columnspan=3)
