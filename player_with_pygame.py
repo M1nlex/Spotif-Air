@@ -25,21 +25,31 @@ def playmusic():
             pygame.mixer.music.pause()
             playmusic.pause = True
 
+def set_vol(val):
+    volume = int(val)/100
+    pygame.mixer.music.set_volume(volume)
+
+
 
 playmusic.donnee = ''
 playmusic.pause = False
 pygame.mixer.init()
+
+connexion = sqlite3.connect("basededonnees.db")
+curseur = connexion.cursor()
+
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
 Player = Frame(fenetre)
 Player.grid(row=0,column=0)
 
+volumecontrol = Scale(Player,from_=100,to=0,orient=VERTICAL,command=set_vol)
+volumecontrol.set(100)
+volumecontrol.grid(row=1,column=4,columnspan=3)
+
 MusicImage = Canvas(Player,relief = 'sunken')
 MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
-
-connexion = sqlite3.connect("basededonnees.db")
-curseur = connexion.cursor()
 
 curseur.execute("SELECT Nom FROM Musique")
 resultats = curseur.fetchall()
@@ -64,5 +74,3 @@ NextMusic = Button(Player, text="Next")
 NextMusic.grid(row=5, column=3)
 
 fenetre.mainloop()
-
-
