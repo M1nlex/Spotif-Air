@@ -15,6 +15,8 @@ def playmusic(file):
     print(file)
     PlaySound(file, SND_FILENAME | SND_ASYNC)
 
+connexion = sqlite3.connect("basededonnees.db")
+curseur = connexion.cursor()
 
 fenetre = Tk()
 fenetre.title("Spotif'Air")
@@ -22,11 +24,12 @@ fenetre.title("Spotif'Air")
 Player = Frame(fenetre)
 Player.grid(row=0,column=0)
 
+volumecontrol = Scale()
+
 MusicImage = Canvas(Player,relief = 'sunken')
 MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
 
-connexion = sqlite3.connect("basededonnees.db")
-curseur = connexion.cursor()
+
 
 curseur.execute("SELECT Nom FROM Musique")
 resultats = curseur.fetchall()
