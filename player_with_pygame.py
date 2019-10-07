@@ -51,17 +51,17 @@ entry1 = ttk.Combobox(Player, values =morceau)
 entry1.grid(row=1, column=2)
 
 
-MusicTitle = Label(Player,text="temporaire")
-MusicTitle.grid(row=4,column=1,columnspan=3)
+MusicTitle = Label(Player, text="temporaire")
+MusicTitle.grid(row=4, column=1, columnspan=3)
 
-PreviousMusic = Button(Player,text="Prev")
-PreviousMusic.grid(row=5,column=1)
+PreviousMusic = Button(Player, text="Prev")
+PreviousMusic.grid(row=5, column=1)
 
-PausePlay = Button(Player,text="Pause/Play",command=lambda:playmusic())
-PausePlay.grid(row=5,column=2)
+PausePlay = Button(Player, text="Pause/Play", command=lambda: playmusic())
+PausePlay.grid(row=5, column=2)
 
-NextMusic = Button(Player,text="Next")
-NextMusic.grid(row=5,column=3)
+NextMusic = Button(Player, text="Next")
+NextMusic.grid(row=5, column=3)
 
 fenetre.mainloop()
 
