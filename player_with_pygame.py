@@ -10,7 +10,7 @@ except ModuleNotFoundError:
 
 def playmusic():
 
-    if pygame.mixer.music.get_busy() == False or playmusic.donnee != (f'{entry1.get()}',):
+    if pygame.mixer.music.get_busy() is False or playmusic.donnee != (f'{entry1.get()}',):
         playmusic.donnee = (f'{entry1.get()}',)
         curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
         file = curseur.fetchone()[0]
@@ -18,16 +18,16 @@ def playmusic():
         pygame.mixer.music.load(file)
         pygame.mixer.music.play(loops=0, start=0.0)
     else:
-        if playmusic.a == 1:
+        if playmusic.pause:
             pygame.mixer.music.unpause()
-            playmusic.a = 0
+            playmusic.pause = False
         else:
             pygame.mixer.music.pause()
-            playmusic.a = 1
+            playmusic.pause = True
 
 
 playmusic.donnee = ''
-playmusic.a = 0
+playmusic.pause = False
 pygame.mixer.init()
 fenetre = Tk()
 fenetre.title("Spotif'Air")
