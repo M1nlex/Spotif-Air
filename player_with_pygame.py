@@ -12,13 +12,13 @@ except ModuleNotFoundError:
 
 def playmusic():
 
-    if pygame.mixer.music.get_busy() is False or playmusic.donnee != (f'{entry1.get()}',):
+    if pygame.mixer.music.get_busy() == 0 or playmusic.donnee != (f'{entry1.get()}',):
         playmusic.donnee = (f'{entry1.get()}',)
         curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
         file = curseur.fetchone()[0]
         print(file)
         pygame.mixer.music.load(file)
-        pygame.mixer.music.play(loops=0, start=0.0)
+        pygame.mixer.music.play(loops=0, start=set_time.starttime)
         t1 = threading.Thread(target=musiquetime)
         t1.start()
     else:
@@ -33,14 +33,16 @@ def set_vol(val):
     volume = int(val)/100
     pygame.mixer.music.set_volume(volume)
 
-
-
+def set_time(val):
+    pygame.mixer.music.stop()
+    set_time.starttime = float(val)
+    playmusic()
 def musiquetime():
     while pygame.mixer.music.get_busy():
-        currenttime.set(float(pygame.mixer.music.get_pos()/1000))
+        currenttime.set(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime)
         time.sleep(0.1)
 
-
+set_time.starttime = 0
 playmusic.donnee = ''
 playmusic.pause = False
 pygame.mixer.init()
@@ -70,7 +72,7 @@ for i in range(len(resultats)):
 currenttime = IntVar()
 entry1 = ttk.Combobox(Player, values =morceau)
 entry1.grid(row=1, column=2)
-scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime)
+scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime, command=set_time)
 scaletime.grid(row=3, column=1, columnspan=3)
 
 MusicTitle = Label(Player, text="temporaire")
