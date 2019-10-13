@@ -4,8 +4,10 @@ from tkinter import ttk
 import time
 import threading
 import sqlite3
+
 try:
     import pygame
+
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
@@ -18,6 +20,8 @@ def playmusic():
         file = curseur.fetchone()[0]
         print(file)
         pygame.mixer.music.load(file)
+        a = pygame.mixer.Sound(file).get_length()
+        scaletime.config(to=a)
         pygame.mixer.music.play(loops=0, start=set_time.starttime)
         t1 = threading.Thread(target=musiquetime)
         t1.start()
@@ -29,18 +33,28 @@ def playmusic():
             pygame.mixer.music.pause()
             playmusic.pause = True
 
+
 def set_vol(val):
     volume = int(val)/100
     pygame.mixer.music.set_volume(volume)
 
+
 def set_time(val):
     pygame.mixer.music.stop()
     set_time.starttime = float(val)
-    playmusic()
+    playmusic.donnee = (f'{entry1.get()}',)
+    curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
+    file = curseur.fetchone()[0]
+    pygame.mixer.music.load(file)
+    pygame.mixer.music.play(loops=0, start=set_time.starttime)
+    t1 = threading.Thread(target=musiquetime)
+    t1.start()
+
 def musiquetime():
     while pygame.mixer.music.get_busy():
         currenttime.set(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime)
         time.sleep(0.1)
+
 
 set_time.starttime = 0
 playmusic.donnee = ''
