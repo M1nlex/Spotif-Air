@@ -15,6 +15,8 @@ except ModuleNotFoundError:
 def playmusic():
 
     if pygame.mixer.music.get_busy() == 0 or playmusic.donnee != (f'{entry1.get()}',):
+        scaletime.set(0)
+        MusicTitle.config(text=entry1.get())
         playmusic.donnee = (f'{entry1.get()}',)
         curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
         file = curseur.fetchone()[0]
@@ -80,16 +82,18 @@ MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
 
 curseur.execute("SELECT Nom FROM Musique")
 resultats = curseur.fetchall()
-morceau = []
+morceaux = []
 for i in range(len(resultats)):
-    morceau.append(resultats[i][0])
+    morceaux.append(resultats[i][0])
 currenttime = IntVar()
-entry1 = ttk.Combobox(Player, values =morceau)
+
+entry1 = ttk.Combobox(Player, values =morceaux)
 entry1.grid(row=1, column=2)
+
 scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime, command=set_time)
 scaletime.grid(row=3, column=1, columnspan=3)
 
-MusicTitle = Label(Player, text="temporaire")
+MusicTitle = Label(Player, text="Spotif-Air")
 MusicTitle.grid(row=4, column=1, columnspan=3)
 
 
