@@ -57,6 +57,13 @@ def musiquetime():
         currenttime.set(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime)
         time.sleep(0.1)
 
+def afficherFrameIntro():
+
+    FrameIntro.grid(row=1,column=0,columnspan=2)
+
+def afficherPlayer():
+    Player.grid(row=1,column=0,columnspan=2)
+
 
 set_time.starttime = 0
 playmusic.donnee = ''
@@ -69,8 +76,24 @@ curseur = connexion.cursor()
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
+ButtonafficherFrameIntro = Button(fenetre,text="Intro",command=lambda:FrameIntro.tkRaise())
+ButtonafficherFrameIntro.grid(row=0,column=0)
+
+ButtonafficherPlayer = Button(fenetre,text="Player",command=lambda:Player.tkraise())
+ButtonafficherPlayer.grid(row=0,column=1)
+
+#-------------------------------------------------------------------Accueil-------------------------------------------------------------------------------
+
+FrameIntro = Frame(fenetre)
+FrameIntro.grid(row=1,column=0,columnspan=2)
+
+Label123 = Label(FrameIntro,text="voila c'est un test")
+Label123.grid(row=0,column=0)
+
+#--------------------------------------------------------------------Player-------------------------------------------------------------------------
+
 Player = Frame(fenetre)
-Player.grid(row=0,column=0)
+Player.grid(row=1,column=0,columnspan=2)
 
 
 volumecontrol = Scale(Player,from_=100,to=0,orient=VERTICAL,command=set_vol)
@@ -95,7 +118,6 @@ scaletime.grid(row=3, column=1, columnspan=3)
 
 MusicTitle = Label(Player, text="Spotif-Air")
 MusicTitle.grid(row=4, column=1, columnspan=3)
-
 
 MusicTime = Label(Player, textvariable=currenttime)
 MusicTime.grid(row=4, column=3, columnspan=3)
