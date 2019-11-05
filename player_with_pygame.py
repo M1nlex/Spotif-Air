@@ -18,6 +18,7 @@ def resize(event):
     Label123.config(font=resize.font)
 
 
+
 def playmusic():
 
     if pygame.mixer.music.get_busy() == 0 or playmusic.donnee != (f'{entry1.get()}',):
