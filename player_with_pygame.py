@@ -13,7 +13,6 @@ except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
 def resize(event):
-    print(fenetre.winfo_height())
     width = int(fenetre.winfo_width())
     resize.font = font.Font(size=int(fenetre.winfo_width()/13))
     Label123.config(font=resize.font)
@@ -64,12 +63,13 @@ def musiquetime():
         currenttime.set(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime)
         time.sleep(0.1)
 
-def afficherFrameIntro():
+def Nextinplaylist():
+    entry1.current((entry1.current()+1)%4)
+    playmusic()
 
-    FrameIntro.grid(row=1,column=0,columnspan=2)
-
-def afficherPlayer():
-    Player.grid(row=1,column=0,columnspan=2)
+def Previousinplaylist():
+    entry1.current((entry1.current()-1)%4)
+    playmusic()
 
 
 set_time.starttime = 0
@@ -129,13 +129,13 @@ MusicTitle.grid(row=4, column=1, columnspan=3)
 MusicTime = Label(Player, textvariable=currenttime)
 MusicTime.grid(row=4, column=3, columnspan=3)
 
-PreviousMusic = Button(Player, text="Prev")
+PreviousMusic = Button(Player, text="Prev",command=Previousinplaylist)
 PreviousMusic.grid(row=5, column=1)
 
 PausePlay = Button(Player, text="Pause/Play", command=lambda: playmusic())
 PausePlay.grid(row=5, column=2)
 
-NextMusic = Button(Player, text="Next")
+NextMusic = Button(Player, text="Next",command=Nextinplaylist)
 NextMusic.grid(row=5, column=3)
 
 fenetre.bind('<Configure>', resize)
