@@ -4,12 +4,19 @@ from tkinter import ttk
 import time
 import threading
 import sqlite3
+from tkinter import font
 
 try:
     import pygame
 
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
+
+def resize(event):
+    print(fenetre.winfo_height())
+    width = int(fenetre.winfo_width())
+    resize.font = font.Font(size=int(fenetre.winfo_width()/13))
+    Label123.config(font=resize.font)
 
 
 def playmusic():
@@ -87,13 +94,13 @@ ButtonafficherPlayer.grid(row=0,column=1)
 FrameIntro = Frame(fenetre)
 FrameIntro.grid(row=1, column=0, columnspan=2, sticky='nsew')
 
-Label123 = Label(FrameIntro, text="voila c'est un test")
-Label123.grid(row=0, column=0)
+Label123 = Label(FrameIntro, text="Welcome on Spotif'air", anchor='center')
+Label123.grid(row=0, column=0, sticky='nsew')
 
 #--------------------------------------------------------------------Player-------------------------------------------------------------------------
 
 Player = Frame(fenetre)
-Player.grid(row=1, column=0,columnspan=2)
+Player.grid(row=1, column=0,columnspan=2, sticky='nsew')
 
 
 volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
@@ -131,4 +138,5 @@ PausePlay.grid(row=5, column=2)
 NextMusic = Button(Player, text="Next")
 NextMusic.grid(row=5, column=3)
 
+fenetre.bind('<Configure>', resize)
 fenetre.mainloop()
