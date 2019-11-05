@@ -83,13 +83,16 @@ curseur = connexion.cursor()
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
-ButtonafficherFrameIntro = Button(fenetre,text="Intro",command=lambda:FrameIntro.tkraise())
-ButtonafficherFrameIntro.grid(row=0,column=0)
+ButtonafficherFrameIntro = Button(fenetre, text="Intro", command=lambda:FrameIntro.tkraise())
+ButtonafficherFrameIntro.grid(row=0, column=0)
 
-ButtonafficherPlayer = Button(fenetre,text="Player",command=lambda:Player.tkraise())
-ButtonafficherPlayer.grid(row=0,column=1)
+ButtonafficherPlayer = Button(fenetre, text="Player", command=lambda:Player.tkraise())
+ButtonafficherPlayer.grid(row=0, column=1)
 
-#-------------------------------------------------------------------Accueil-------------------------------------------------------------------------------
+ButtonafficherRecherche = Button(fenetre, text="Recherche", command=lambda:FrameRecherche.tkraise())
+ButtonafficherRecherche.grid(row=0, column=2)
+
+# -------------------------------------------------------------------Accueil-------------------------------------------------------------------------------
 
 FrameIntro = Frame(fenetre)
 FrameIntro.grid(row=1, column=0, columnspan=2, sticky='nsew')
@@ -97,7 +100,15 @@ FrameIntro.grid(row=1, column=0, columnspan=2, sticky='nsew')
 Label123 = Label(FrameIntro, text="Welcome on Spotif'air", anchor='center')
 Label123.grid(row=0, column=0, sticky='nsew')
 
-#--------------------------------------------------------------------Player-------------------------------------------------------------------------
+# -------------------------------------------------------------------Recherche-------------------------------------------------------------------------------
+
+FrameRecherche = Frame(fenetre)
+FrameRecherche.grid(row=1, column=0, columnspan=2, sticky='nsew')
+
+Label223 = Label(FrameRecherche, text="Recherche", anchor='center')
+Label223.grid(row=0, column=0, sticky='nsew')
+
+# --------------------------------------------------------------------Player-------------------------------------------------------------------------
 
 Player = Frame(fenetre)
 Player.grid(row=1, column=0,columnspan=2, sticky='nsew')
@@ -115,6 +126,7 @@ resultats = curseur.fetchall()
 morceaux = []
 for i in range(len(resultats)):
     morceaux.append(resultats[i][0])
+    print(morceaux)
 currenttime = IntVar()
 
 entry1 = ttk.Combobox(Player, values =morceaux)
@@ -138,5 +150,5 @@ PausePlay.grid(row=5, column=2)
 NextMusic = Button(Player, text="Next")
 NextMusic.grid(row=5, column=3)
 
-fenetre.bind('<Configure>', resize)
+# fenetre.bind('<Configure>', resize)
 fenetre.mainloop()
