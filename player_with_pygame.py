@@ -85,20 +85,20 @@ ButtonafficherPlayer.grid(row=0,column=1)
 #-------------------------------------------------------------------Accueil-------------------------------------------------------------------------------
 
 FrameIntro = Frame(fenetre)
-FrameIntro.grid(row=1,column=0,columnspan=2, sticky='nsew')
+FrameIntro.grid(row=1, column=0, columnspan=2, sticky='nsew')
 
-Label123 = Label(FrameIntro,text="voila c'est un test")
-Label123.grid(row=0,column=0)
+Label123 = Label(FrameIntro, text="voila c'est un test")
+Label123.grid(row=0, column=0)
 
 #--------------------------------------------------------------------Player-------------------------------------------------------------------------
 
 Player = Frame(fenetre)
-Player.grid(row=1,column=0,columnspan=2)
+Player.grid(row=1, column=0,columnspan=2)
 
 
-volumecontrol = Scale(Player,from_=100,to=0,orient=VERTICAL,command=set_vol)
+volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
 volumecontrol.set(100)
-volumecontrol.grid(row=1,column=4,columnspan=3)
+volumecontrol.grid(row=1, column=4, columnspan=3)
 
 MusicImage = Canvas(Player,relief = 'sunken')
 MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
