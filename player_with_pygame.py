@@ -76,7 +76,7 @@ curseur = connexion.cursor()
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
-ButtonafficherFrameIntro = Button(fenetre,text="Intro",command=lambda:FrameIntro.tkRaise())
+ButtonafficherFrameIntro = Button(fenetre,text="Intro",command=lambda:FrameIntro.tkraise())
 ButtonafficherFrameIntro.grid(row=0,column=0)
 
 ButtonafficherPlayer = Button(fenetre,text="Player",command=lambda:Player.tkraise())
@@ -85,7 +85,7 @@ ButtonafficherPlayer.grid(row=0,column=1)
 #-------------------------------------------------------------------Accueil-------------------------------------------------------------------------------
 
 FrameIntro = Frame(fenetre)
-FrameIntro.grid(row=1,column=0,columnspan=2)
+FrameIntro.grid(row=1,column=0,columnspan=2, sticky='nsew')
 
 Label123 = Label(FrameIntro,text="voila c'est un test")
 Label123.grid(row=0,column=0)
