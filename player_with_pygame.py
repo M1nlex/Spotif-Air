@@ -108,23 +108,6 @@ FrameRecherche.grid(row=1, column=0, columnspan=2, sticky='nsew')
 Label223 = Label(FrameRecherche, text="Recherche", anchor='center')
 Label223.grid(row=0, column=0, sticky='nsew')
 
-# --------------------------------------------------------------------Player-------------------------------------------------------------------------
-
-Player = Frame(fenetre)
-Player.grid(row=1, column=0,columnspan=2, sticky='nsew')
-
-
-
-
-
-
-volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
-volumecontrol.set(100)
-volumecontrol.grid(row=1, column=4, columnspan=3)
-
-MusicImage = Canvas(Player,relief = 'sunken')
-MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
-
 curseur.execute("SELECT Nom FROM Musique")
 resultats = curseur.fetchall()
 morceaux = []
@@ -132,29 +115,45 @@ for i in range(len(resultats)):
     morceaux.append(resultats[i][0])
 currenttime = IntVar()
 
-entry1 = ttk.Combobox(Player, values =morceaux)
-entry1.grid(row=1, column=2)
+entry1 = ttk.Combobox(FrameRecherche, values =morceaux)
+entry1.grid(row=1, column=0)
+
+# --------------------------------------------------------------------Player-------------------------------------------------------------------------
+
+Player = Frame(fenetre)
+Player.grid(row=1, column=0,columnspan=2, sticky='nsew')
+
+
+
+volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
+volumecontrol.set(100)
+volumecontrol.grid(row=1, column=4, columnspan=3)
+
+MusicImage = Label(Player,relief = 'sunken',height=10,width=30,border=10)
+MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
+
+
 
 scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime, command=set_time)
-scaletime.grid(row=3, column=1, columnspan=3)
+scaletime.grid(row=4, column=1, columnspan=3)
 
 MusicTitle = Label(Player, text="Spotif-Air")
-MusicTitle.grid(row=4, column=1, columnspan=3)
+MusicTitle.grid(row=5, column=1, columnspan=3)
 
 MusicTime = Label(Player, textvariable=(currenttime))
-MusicTime.grid(row=4, column=3, columnspan=3)
+MusicTime.grid(row=5, column=3, columnspan=3)
 
 photoprevious= PhotoImage(file="IconsAndImages/buttonprevious50.gif")
 PreviousMusic = Button(Player, image=photoprevious,command=Previousinplaylist)
-PreviousMusic.grid(row=5, column=1)
+PreviousMusic.grid(row=6, column=1)
 
 photopause= PhotoImage(file="IconsAndImages/pauseplay50.gif")
 PausePlay = Button(Player, image=photopause, command=lambda: playmusic())
-PausePlay.grid(row=5, column=2)
+PausePlay.grid(row=6, column=2)
 
 photonext= PhotoImage(file="IconsAndImages/buttonnext50.gif")
 NextMusic = Button(Player, image=photonext,command=Nextinplaylist)
-NextMusic.grid(row=5, column=3)
+NextMusic.grid(row=6, column=3)
 
 # fenetre.bind('<Configure>', resize)
 fenetre.mainloop()
