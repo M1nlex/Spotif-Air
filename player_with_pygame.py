@@ -61,7 +61,7 @@ def set_time(val):
 
 def musiquetime():
     while pygame.mixer.music.get_busy():
-        currenttime.set(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime)
+        currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.2f'))
         time.sleep(0.1)
 
 def Nextinplaylist():
@@ -139,7 +139,7 @@ scaletime.grid(row=3, column=1, columnspan=3)
 MusicTitle = Label(Player, text="Spotif-Air")
 MusicTitle.grid(row=4, column=1, columnspan=3)
 
-MusicTime = Label(Player, textvariable=currenttime)
+MusicTime = Label(Player, textvariable=(currenttime))
 MusicTime.grid(row=4, column=3, columnspan=3)
 
 PreviousMusic = Button(Player, text="Prev",command=Previousinplaylist)
