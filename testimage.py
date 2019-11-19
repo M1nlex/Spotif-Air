@@ -1,21 +1,20 @@
 from tkinter import *
-from PIL import Image
+from PIL import ImageTk
 
 
-n = 10
-image1 = Image.open('IconsAndImages/Buttonnext.gif')
-image1.resize((n,n))
-image1.save('IconsAndImages/butontestnext.gif')
 
-# file='IconsAndImages/Buttonnext.gif'
-# photo = PhotoImage(image1)
-
-"""
 root = Tk()
-button1 = Button(root, image=photo)
+
+photopause= PhotoImage(file="IconsAndImages/pauseplay50.gif")
+button0 = Button(root, image=photopause)
+button0.pack()
+
+photonext= PhotoImage(file="IconsAndImages/buttonnext50.gif")
+button1 = Button(root, image=photonext)
 button1.pack()
 
-Label(root, text="toto").pack()
+photoprevious= PhotoImage(file="IconsAndImages/buttonprevious50.gif")
+button2 = Button(root, image=photoprevious)
+button2.pack()
 
 root.mainloop()
-"""

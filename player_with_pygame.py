@@ -27,7 +27,6 @@ def playmusic():
         playmusic.donnee = (f'{entry1.get()}',)
         curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
         file = curseur.fetchone()[0]
-        print(file)
         pygame.mixer.music.load(file)
         a = pygame.mixer.Sound(file).get_length()
         scaletime.config(to=a)
@@ -115,6 +114,10 @@ Player = Frame(fenetre)
 Player.grid(row=1, column=0,columnspan=2, sticky='nsew')
 
 
+
+
+
+
 volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
 volumecontrol.set(100)
 volumecontrol.grid(row=1, column=4, columnspan=3)
@@ -127,7 +130,6 @@ resultats = curseur.fetchall()
 morceaux = []
 for i in range(len(resultats)):
     morceaux.append(resultats[i][0])
-    print(morceaux)
 currenttime = IntVar()
 
 entry1 = ttk.Combobox(Player, values =morceaux)
@@ -142,13 +144,16 @@ MusicTitle.grid(row=4, column=1, columnspan=3)
 MusicTime = Label(Player, textvariable=currenttime)
 MusicTime.grid(row=4, column=3, columnspan=3)
 
-PreviousMusic = Button(Player, text="Prev",command=Previousinplaylist)
+photoprevious= PhotoImage(file="IconsAndImages/buttonprevious50.gif")
+PreviousMusic = Button(Player, image=photoprevious,command=Previousinplaylist)
 PreviousMusic.grid(row=5, column=1)
 
-PausePlay = Button(Player, text="Pause/Play", command=lambda: playmusic())
+photopause= PhotoImage(file="IconsAndImages/pauseplay50.gif")
+PausePlay = Button(Player, image=photopause, command=lambda: playmusic())
 PausePlay.grid(row=5, column=2)
 
-NextMusic = Button(Player, text="Next",command=Nextinplaylist)
+photonext= PhotoImage(file="IconsAndImages/buttonnext50.gif")
+NextMusic = Button(Player, image=photonext,command=Nextinplaylist)
 NextMusic.grid(row=5, column=3)
 
 # fenetre.bind('<Configure>', resize)
