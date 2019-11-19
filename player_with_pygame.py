@@ -61,7 +61,7 @@ def set_time(val):
 
 def musiquetime():
     while pygame.mixer.music.get_busy():
-        currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.2f'))
+        currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.0f'))
         time.sleep(0.1)
 
 def Nextinplaylist():
