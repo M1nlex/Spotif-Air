@@ -27,6 +27,18 @@ def playmusic():
         playmusic.donnee = (f'{entry1.get()}',)
         curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
         file = curseur.fetchone()[0]
+
+        # Changement image album
+        curseur.execute("SELECT ID_img FROM Musique WHERE Nom = ?", playmusic.donnee)
+        ID_img = curseur.fetchone()[0]
+        curseur.execute("SELECT Link FROM Musique_Image WHERE ID_img = ?",str(ID_img))
+        Lien_img = curseur.fetchone()[0]
+        music_img = PhotoImage(file=Lien_img)
+        MusicImage.config(image=music_img)
+        music_img.config(height=10,width=30)
+        MusicImage.image = music_img
+
+        # Lancement musique
         pygame.mixer.music.load(file)
         a = pygame.mixer.Sound(file).get_length()
         scaletime.config(to=a)
@@ -83,14 +95,17 @@ curseur = connexion.cursor()
 fenetre = Tk()
 fenetre.title("Spotif'Air")
 
-ButtonafficherFrameIntro = Button(fenetre, text="Intro", command=lambda:FrameIntro.tkraise())
-ButtonafficherFrameIntro.grid(row=0, column=0)
+FrameButton = Frame(fenetre,relief='raise',bg='blue',bd=5)
+FrameButton.grid(row=0,column=0,columnspan=5,sticky='ew')
 
-ButtonafficherPlayer = Button(fenetre, text="Player", command=lambda:Player.tkraise())
-ButtonafficherPlayer.grid(row=0, column=1)
+ButtonafficherFrameIntro = Button(FrameButton, text="Intro", command=lambda:FrameIntro.tkraise())
+ButtonafficherFrameIntro.pack(side="left",expand="True",fill="x")
 
-ButtonafficherRecherche = Button(fenetre, text="Recherche", command=lambda:FrameRecherche.tkraise())
-ButtonafficherRecherche.grid(row=0, column=2)
+ButtonafficherPlayer = Button(FrameButton, text="Player", command=lambda:Player.tkraise())
+ButtonafficherPlayer.pack(side="left",expand="True",fill="x")
+
+ButtonafficherRecherche = Button(FrameButton, text="Recherche", command=lambda:FrameRecherche.tkraise())
+ButtonafficherRecherche.pack(side="left",expand="True",fill="x")
 
 # -------------------------------------------------------------------Accueil-------------------------------------------------------------------------------
 
@@ -129,6 +144,7 @@ volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
 volumecontrol.set(100)
 volumecontrol.grid(row=1, column=4, columnspan=3)
 
+music_img = PhotoImage(file="Music_Img/Blackmagik Blazing.gif")
 MusicImage = Label(Player,relief = 'sunken',height=10,width=30,border=10)
 MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
 
@@ -157,3 +173,6 @@ NextMusic.grid(row=6, column=3)
 
 # fenetre.bind('<Configure>', resize)
 fenetre.mainloop()
+
+# fermeture connexion
+connexion.close()
