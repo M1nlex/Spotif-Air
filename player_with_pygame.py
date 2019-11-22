@@ -29,6 +29,7 @@ def playmusic():
         file = curseur.fetchone()[0]
 
         # Changement image album
+        """
         curseur.execute("SELECT ID_img FROM Musique WHERE Nom = ?", playmusic.donnee)
         ID_img = curseur.fetchone()[0]
         curseur.execute("SELECT Link FROM Musique_Image WHERE ID_img = ?",str(ID_img))
@@ -37,6 +38,15 @@ def playmusic():
         MusicImage.config(image=music_img)
         music_img.config(height=10,width=30)
         MusicImage.image = music_img
+        """
+        curseur.execute("SELECT ID_img FROM Musique WHERE Nom = ?", playmusic.donnee)
+        ID_img = curseur.fetchone()[0]
+        curseur.execute("SELECT Link FROM Musique_Image WHERE ID_img = ?",str(ID_img))
+        Lien_img = curseur.fetchone()[0]
+        music_img = PhotoImage(file=Lien_img)
+        canvasimage.delete(image_on_canvas)
+        canvasimage.create_image(20,20,anchor=NW,image=music_img)
+        canvasimage.image = music_img
 
         # Lancement musique
         pygame.mixer.music.load(file)
@@ -139,14 +149,25 @@ Player = Frame(fenetre)
 Player.grid(row=1, column=0,columnspan=2, sticky='nsew')
 
 
-
 volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
 volumecontrol.set(100)
-volumecontrol.grid(row=1, column=4, columnspan=3)
+volumecontrol.grid(row=1, column=4,columnspan=5)
+
+FrameImage = Frame(Player)
+FrameImage.grid(row=1, rowspan=3, column=1, columnspan=3, sticky='nsew')
+
+"""
+music_img = PhotoImage(file="Music_Img/Blackmagik Blazing.gif")
+MusicImage = Label(FrameImage,height=10,width=30,border=10)
+MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
+"""
 
 music_img = PhotoImage(file="Music_Img/Blackmagik Blazing.gif")
-MusicImage = Label(Player,relief = 'sunken',height=10,width=30,border=10)
-MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
+canvasimage = Canvas(FrameImage,height=250,width=250,bd=10,bg='blue',relief='sunken')
+canvasimage.grid(row=0,column=0)
+#img2 = music_img.subsample(2,2)
+#canvasimage.create_image(20,20,anchor=NW,image=music_img)
+image_on_canvas = canvasimage.create_image(20,20,anchor=NW,image=music_img)
 
 
 
