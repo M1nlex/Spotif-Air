@@ -12,6 +12,8 @@ try:
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
+#-----------------------------------------------------------------------------------fonctions----------------------------------------------------------------
+
 def resize(event):
     width = int(fenetre.winfo_width())
     resize.font = font.Font(size=int(fenetre.winfo_width()/13))
@@ -29,16 +31,6 @@ def playmusic():
         file = curseur.fetchone()[0]
 
         # Changement image album
-        """
-        curseur.execute("SELECT ID_img FROM Musique WHERE Nom = ?", playmusic.donnee)
-        ID_img = curseur.fetchone()[0]
-        curseur.execute("SELECT Link FROM Musique_Image WHERE ID_img = ?",str(ID_img))
-        Lien_img = curseur.fetchone()[0]
-        music_img = PhotoImage(file=Lien_img)
-        MusicImage.config(image=music_img)
-        music_img.config(height=10,width=30)
-        MusicImage.image = music_img
-        """
         curseur.execute("SELECT ID_img FROM Musique WHERE Nom = ?", playmusic.donnee)
         ID_img = curseur.fetchone()[0]
         curseur.execute("SELECT Link FROM Musique_Image WHERE ID_img = ?",str(ID_img))
@@ -87,12 +79,15 @@ def musiquetime():
 
 def Nextinplaylist():
     entry1.current((entry1.current()+1)%4)
+    scaletime.set(0)
     playmusic()
 
 def Previousinplaylist():
     entry1.current((entry1.current()-1)%4)
+    scaletime(set(0))
     playmusic()
 
+#-----------------------------------------------------------INTERFACE--------------------------------------------------------------------------
 
 set_time.starttime = 0
 playmusic.donnee = ''
