@@ -186,7 +186,7 @@ PausePlay.grid(row=6, column=2)
 photonext= PhotoImage(file="IconsAndImages/buttonnext50.gif")
 NextMusic = Button(Player, image=photonext,command=Nextinplaylist)
 NextMusic.grid(row=6, column=3)
-
+FrameIntro.tkraise()
 # fenetre.bind('<Configure>', resize)
 fenetre.mainloop()
 
