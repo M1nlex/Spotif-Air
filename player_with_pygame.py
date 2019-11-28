@@ -79,13 +79,13 @@ def musiquetime():
 
 def Nextinplaylist():
     entry1.current((entry1.current()+1)%4)
-    scaletime.set(0)
     playmusic()
+    set_time(0)
 
 def Previousinplaylist():
     entry1.current((entry1.current()-1)%4)
-    scaletime(set(0))
     playmusic()
+    set_time(0)
 
 #-----------------------------------------------------------INTERFACE--------------------------------------------------------------------------
 
@@ -180,7 +180,7 @@ PausePlay.grid(row=6, column=2)
 photonext= PhotoImage(file="IconsAndImages/buttonnext50.gif")
 NextMusic = Button(Player, image=photonext,command=Nextinplaylist)
 NextMusic.grid(row=6, column=3)
-
+FrameIntro.tkraise()
 # fenetre.bind('<Configure>', resize)
 fenetre.mainloop()
 
