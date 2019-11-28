@@ -151,13 +151,7 @@ volumecontrol.grid(row=1, column=4,columnspan=5)
 FrameImage = Frame(Player)
 FrameImage.grid(row=1, rowspan=3, column=1, columnspan=3, sticky='nsew')
 
-"""
-music_img = PhotoImage(file="Music_Img/Blackmagik Blazing.gif")
-MusicImage = Label(FrameImage,height=10,width=30,border=10)
-MusicImage.grid(row=1, rowspan=3, column=1, columnspan=3)
-"""
-
-music_img = PhotoImage(file="Music_Img/Blackmagik Blazing.gif")
+music_img = PhotoImage(file="IconsAndImages/logo.gif")
 canvasimage = Canvas(FrameImage,height=250,width=250,bd=10,bg='blue',relief='sunken')
 canvasimage.grid(row=0,column=0)
 #img2 = music_img.subsample(2,2)
