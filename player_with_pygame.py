@@ -79,13 +79,13 @@ def musiquetime():
 
 def Nextinplaylist():
     entry1.current((entry1.current()+1)%4)
-    scaletime.set(0)
     playmusic()
+    set_time(0)
 
 def Previousinplaylist():
     entry1.current((entry1.current()-1)%4)
-    scaletime(set(0))
     playmusic()
+    set_time(0)
 
 #-----------------------------------------------------------INTERFACE--------------------------------------------------------------------------
 
