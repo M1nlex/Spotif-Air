@@ -72,6 +72,7 @@ def set_time(val):
     t1 = threading.Thread(target=musiquetime)
     t1.start()
 
+
 def musiquetime():
     while pygame.mixer.music.get_busy():
         currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.0f'))
@@ -148,12 +149,12 @@ volumecontrol = Scale(Player, from_=100, to=0, orient=VERTICAL, command=set_vol)
 volumecontrol.set(100)
 volumecontrol.grid(row=1, column=4,columnspan=5)
 
-FrameImage = Frame(Player)
+FrameImage = Frame(Player, height=300, width=250)
 FrameImage.grid(row=1, rowspan=3, column=1, columnspan=3, sticky='nsew')
-
+FrameImage.grid_propagate(0)
 music_img = PhotoImage(file="IconsAndImages/logo.gif")
-canvasimage = Canvas(FrameImage,height=250,width=250,bd=10,bg='blue',relief='sunken')
-canvasimage.grid(row=0,column=0)
+canvasimage = Canvas(FrameImage,height=250,width=250,bd=5,bg='blue',relief='sunken')
+canvasimage.place(relx=0.5, rely=0.5, anchor=CENTER)
 #img2 = music_img.subsample(2,2)
 #canvasimage.create_image(20,20,anchor=NW,image=music_img)
 image_on_canvas = canvasimage.create_image(20,20,anchor=NW,image=music_img)
@@ -186,3 +187,4 @@ fenetre.mainloop()
 
 # fermeture connexion
 connexion.close()
+
