@@ -12,13 +12,13 @@ try:
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
-#-----------------------------------------------------------------------------------fonctions----------------------------------------------------------------
+# ---------------------------------------------fonctions----------------------------------------------------------------
+
 
 def resize(event):
     width = int(fenetre.winfo_width())
     resize.font = font.Font(size=int(fenetre.winfo_width()/13))
     Label123.config(font=resize.font)
-
 
 
 def playmusic():
@@ -78,17 +78,20 @@ def musiquetime():
         currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.0f'))
         time.sleep(0.1)
 
+
 def Nextinplaylist():
     entry1.current((entry1.current()+1) % 8)
     playmusic()
     set_time(0)
+
 
 def Previousinplaylist():
     entry1.current((entry1.current()-1) % 8)
     playmusic()
     set_time(0)
 
-#-----------------------------------------------------------INTERFACE--------------------------------------------------------------------------
+# ----------------------------------------------------------INTERFACE---------------------------------------------------
+
 
 set_time.starttime = 0
 playmusic.donnee = ''
@@ -158,7 +161,6 @@ canvasimage.place(relx=0.5, rely=0.5, anchor=CENTER)
 #img2 = music_img.subsample(2,2)
 #canvasimage.create_image(20,20,anchor=NW,image=music_img)
 image_on_canvas = canvasimage.create_image(20,20,anchor=NW,image=music_img)
-
 
 
 scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime, command=set_time)
