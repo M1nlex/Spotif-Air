@@ -79,12 +79,12 @@ def musiquetime():
         time.sleep(0.1)
 
 def Nextinplaylist():
-    entry1.current((entry1.current()+1)%4)
+    entry1.current((entry1.current()+1) % 8)
     playmusic()
     set_time(0)
 
 def Previousinplaylist():
-    entry1.current((entry1.current()-1)%4)
+    entry1.current((entry1.current()-1) % 8)
     playmusic()
     set_time(0)
 
@@ -153,7 +153,7 @@ FrameImage = Frame(Player, height=300, width=250)
 FrameImage.grid(row=1, rowspan=3, column=1, columnspan=3, sticky='nsew')
 FrameImage.grid_propagate(0)
 music_img = PhotoImage(file="IconsAndImages/logo.gif")
-canvasimage = Canvas(FrameImage,height=250,width=250,bd=5,bg='blue',relief='sunken')
+canvasimage = Canvas(FrameImage,height=250,width=250,bd=5,relief='sunken')
 canvasimage.place(relx=0.5, rely=0.5, anchor=CENTER)
 #img2 = music_img.subsample(2,2)
 #canvasimage.create_image(20,20,anchor=NW,image=music_img)
