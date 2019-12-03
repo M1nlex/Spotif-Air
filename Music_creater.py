@@ -4,17 +4,37 @@ import sqlite3
 
 class Creator(Toplevel):
 
-    def __init__(self):
-        self.title = Label(self,text="Ajouter une musique").grid(row=0,column=0,columnspan=3)
-        
+    def __init__(self,conteneur):
+
+        Toplevel.__init__(self,conteneur)
+
+        self.titlelabel = Label(self,text="Ajouter une musique").grid(row=0,column=0,columnspan=3)
+
+        self.lien_music = Entry(self)
+        self.lien_music.grid(row=1,column=1)
+
+        self.lien_image = Entry(self)
+        self.lien_image.grid(row=2,column=1)
+
+        self.Name = Entry(self)
+        self.Name.grid(row=3,column=1)
+
+        self.Compo = Entry(self)
+        self.Compo.grid(row=4,column=1)
+
+        self.Album = Entry(self)
+        self.Album.grid(row=5,column=1)
+
 
 
 
 
 if __name__ == '__main__':
     necessary = Tk()
-    fen = Creator()
+    fen = Creator(necessary)
+
     necessary.mainloop()
+
 
 """
 Music_Name
