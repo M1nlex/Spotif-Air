@@ -23,6 +23,9 @@ def resize(event):
 
 def playmusic():
 
+    if (f'{entry1.get()}' == ""):
+        entry1.set(random.choice(morceaux))
+
     if pygame.mixer.music.get_busy() == 0 or playmusic.donnee != (f'{entry1.get()}',):
         scaletime.set(0)
         MusicTitle.config(text=entry1.get())
@@ -189,4 +192,3 @@ fenetre.mainloop()
 
 # fermeture connexion
 connexion.close()
-
