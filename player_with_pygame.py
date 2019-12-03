@@ -62,6 +62,7 @@ def playmusic():
     else:
         if playmusic.pause:
             pygame.mixer.music.unpause()
+            cursortime(currenttime.get())
             playmusic.pause = False
         else:
             pygame.mixer.music.pause()
@@ -72,8 +73,14 @@ def set_vol(val):
     volume = int(val)/100
     pygame.mixer.music.set_volume(volume)
 
+def cursortime(val):
+    print(val, currenttime.get())
+    global threadkill
+    threadkill = 3
+
 
 def set_time(val):
+    global threadkill
     pygame.mixer.music.stop()
     set_time.starttime = float(val)
     playmusic.donnee = (f'{entry1.get()}',)
@@ -81,7 +88,8 @@ def set_time(val):
     file = curseur.fetchone()[0]
     pygame.mixer.music.load(file)
     pygame.mixer.music.play(loops=0, start=set_time.starttime)
-
+    t1 = threading.Thread(target=lambda: musiquetime(playmusic.a))
+    t1.start()
 
 def musiquetime(a):
     global threadkill
@@ -89,7 +97,7 @@ def musiquetime(a):
     while pygame.mixer.music.get_busy():
         currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.0f'))
         time.sleep(0.1)
-        print(a, currenttime.get(), threadkill)
+        #print(a, currenttime.get(), threadkill)
         if int(a) == currenttime.get():
             print('next')
             Nextinplaylist()
@@ -101,6 +109,10 @@ def musiquetime(a):
         if threadkill == 2:
             threadkill = False
             Previousinplaylist()
+            break
+        if threadkill == 3:
+            threadkill = False
+            set_time(scaletime.get())
             break
 
 def next():
@@ -195,7 +207,7 @@ canvasimage.place(relx=0.5, rely=0.5, anchor=CENTER)
 image_on_canvas = canvasimage.create_image(20,20,anchor=NW,image=music_img)
 
 
-scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime, command=set_time)
+scaletime = Scale(Player, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=currenttime, command=cursortime)
 scaletime.grid(row=4, column=1, columnspan=3)
 
 MusicTitle = Label(Player, text="Spotif-Air")
@@ -221,3 +233,5 @@ fenetre.mainloop()
 
 # fermeture connexion
 connexion.close()
+
+sys.exit()
