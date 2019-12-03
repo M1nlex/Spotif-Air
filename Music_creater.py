@@ -10,9 +10,12 @@ class Creator(Toplevel):
 
         self.titlelabel = Label(self,text="Ajouter une musique").grid(row=0,column=0,columnspan=3)
 
+
+        self.Label_lien_music = Label(self,text="Fichier musique (format ogg)").grid(row=1,column=1)
         self.lien_music = Entry(self)
         self.lien_music.grid(row=1,column=1)
 
+        self.Label_lien_image = Label(self,text="Fichier musique (format ogg)").grid(row=1,column=2)
         self.lien_image = Entry(self)
         self.lien_image.grid(row=2,column=1)
 
@@ -25,7 +28,8 @@ class Creator(Toplevel):
         self.Album = Entry(self)
         self.Album.grid(row=5,column=1)
 
-
+        self.Genre = Entry(self)
+        self.Genre.grid(row=6,column=1)
 
 
 
