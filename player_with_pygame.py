@@ -5,6 +5,7 @@ import time
 import threading
 import sqlite3
 from tkinter import font
+import random
 
 try:
     import pygame
