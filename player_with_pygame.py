@@ -74,7 +74,7 @@ def set_vol(val):
     pygame.mixer.music.set_volume(volume)
 
 def cursortime(val):
-    print(val, currenttime.get())
+    #print(val, currenttime.get())
     global threadkill
     threadkill = 3
 
@@ -101,6 +101,8 @@ def musiquetime(a):
         if int(a) == currenttime.get():
             print('next')
             Nextinplaylist()
+            break
+        if threadkill == 4:
             break
         if threadkill == 1:
             threadkill = False
@@ -229,6 +231,13 @@ NextMusic = Button(Player, image=photonext,command=next)
 NextMusic.grid(row=6, column=3)
 FrameIntro.tkraise()
 # fenetre.bind('<Configure>', resize)
+def on_closing():
+    global threadkill
+    threadkill = 4
+
+    fenetre.destroy()
+
+fenetre.protocol("WM_DELETE_WINDOW", on_closing)
 fenetre.mainloop()
 
 # fermeture connexion
