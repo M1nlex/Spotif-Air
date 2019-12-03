@@ -1,0 +1,29 @@
+page de garde:
+		titre,
+		date,
+		groupe,
+		logo ipsa,
+		logo projet,
+
+Sommaire:
+		arborescence,
+
+Intro:
+		pourquoi ?
+
+Contenu:
+		tout, capture d'écran
+
+Conclusion:
+		oui
+
+Annexes:
+		sites,
+		programmes,
+		etc...
+Résumé:
+
+
+
+
+NUMERO DE PAGES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
