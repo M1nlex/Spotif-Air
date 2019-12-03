@@ -12,6 +12,12 @@ try:
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
+#----------------------------------------------Requêtes------------------------------------------------------------
+
+sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
+sql_image = "SELECT Image.Image_Link FROM Image,Musique WHERE ( Image.Image_Id = Musique.Image_Id AND Musique.Music_Name = ? )"
+sql_list_music = "SELECT Music_Name FROM Musique"
+
 # ---------------------------------------------fonctions----------------------------------------------------------------
 
 
@@ -30,13 +36,11 @@ def playmusic():
         scaletime.set(0)
         MusicTitle.config(text=entry1.get())
         playmusic.donnee = (f'{entry1.get()}',)
-        curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
+        curseur.execute(sql_music, playmusic.donnee)
         file = curseur.fetchone()[0]
 
         # Changement image album
-        curseur.execute("SELECT ID_img FROM Musique WHERE Nom = ?", playmusic.donnee)
-        ID_img = curseur.fetchone()[0]
-        curseur.execute("SELECT Link FROM Musique_Image WHERE ID_img = ?",str(ID_img))
+        curseur.execute(sql_image, playmusic.donnee)
         Lien_img = curseur.fetchone()[0]
         music_img = PhotoImage(file=Lien_img)
         canvasimage.delete(image_on_canvas)
@@ -68,7 +72,7 @@ def set_time(val):
     pygame.mixer.music.stop()
     set_time.starttime = float(val)
     playmusic.donnee = (f'{entry1.get()}',)
-    curseur.execute("SELECT lien FROM Musique WHERE Nom = ?", playmusic.donnee)
+    curseur.execute(sql_music, playmusic.donnee)
     file = curseur.fetchone()[0]
     pygame.mixer.music.load(file)
     pygame.mixer.music.play(loops=0, start=set_time.starttime)
@@ -135,7 +139,7 @@ FrameRecherche.grid(row=1, column=0, columnspan=2, sticky='nsew')
 Label223 = Label(FrameRecherche, text="Recherche", anchor='center')
 Label223.grid(row=0, column=0, sticky='nsew')
 
-curseur.execute("SELECT Nom FROM Musique")
+curseur.execute(sql_list_music)
 resultats = curseur.fetchall()
 morceaux = []
 for i in range(len(resultats)):
