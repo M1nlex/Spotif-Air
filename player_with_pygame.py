@@ -13,6 +13,10 @@ try:
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
+global threadkill
+threadkill = False
+
+
 #----------------------------------------------Requêtes------------------------------------------------------------
 
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
@@ -50,10 +54,10 @@ def playmusic():
 
         # Lancement musique
         pygame.mixer.music.load(file)
-        a = pygame.mixer.Sound(file).get_length()
-        scaletime.config(to=a)
+        playmusic.a = pygame.mixer.Sound(file).get_length()
+        scaletime.config(to=playmusic.a)
         pygame.mixer.music.play(loops=0, start=set_time.starttime)
-        t1 = threading.Thread(target=musiquetime)
+        t1 = threading.Thread(target=lambda : musiquetime(playmusic.a))
         t1.start()
     else:
         if playmusic.pause:
@@ -77,21 +81,41 @@ def set_time(val):
     file = curseur.fetchone()[0]
     pygame.mixer.music.load(file)
     pygame.mixer.music.play(loops=0, start=set_time.starttime)
-    t1 = threading.Thread(target=musiquetime)
-    t1.start()
 
 
-def musiquetime():
+def musiquetime(a):
+    global threadkill
+
     while pygame.mixer.music.get_busy():
         currenttime.set(format(float(pygame.mixer.music.get_pos()/1000)+set_time.starttime, '.0f'))
         time.sleep(0.1)
+        print(a, currenttime.get(), threadkill)
+        if int(a) == currenttime.get():
+            print('next')
+            Nextinplaylist()
+            break
+        if threadkill == 1:
+            threadkill = False
+            Nextinplaylist()
+            break
+        if threadkill == 2:
+            threadkill = False
+            Previousinplaylist()
+            break
+
+def next():
+    global threadkill
+    threadkill = 1
+
+def previous():
+    global threadkill
+    threadkill = 2
 
 
 def Nextinplaylist():
     entry1.current((entry1.current()+1) % 8)
     playmusic()
     set_time(0)
-
 
 def Previousinplaylist():
     entry1.current((entry1.current()-1) % 8)
@@ -106,7 +130,7 @@ playmusic.donnee = ''
 playmusic.pause = False
 pygame.mixer.init()
 
-connexion = sqlite3.connect("basededonnees.db")
+connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
 curseur = connexion.cursor()
 
 fenetre = Tk()
@@ -181,7 +205,7 @@ MusicTime = Label(Player, textvariable=(currenttime))
 MusicTime.grid(row=5, column=3, columnspan=3)
 
 photoprevious= PhotoImage(file="IconsAndImages/buttonprevious50.gif")
-PreviousMusic = Button(Player, image=photoprevious,command=Previousinplaylist)
+PreviousMusic = Button(Player, image=photoprevious,command=previous)
 PreviousMusic.grid(row=6, column=1)
 
 photopause= PhotoImage(file="IconsAndImages/pauseplay50.gif")
@@ -189,7 +213,7 @@ PausePlay = Button(Player, image=photopause, command=lambda: playmusic())
 PausePlay.grid(row=6, column=2)
 
 photonext= PhotoImage(file="IconsAndImages/buttonnext50.gif")
-NextMusic = Button(Player, image=photonext,command=Nextinplaylist)
+NextMusic = Button(Player, image=photonext,command=next)
 NextMusic.grid(row=6, column=3)
 FrameIntro.tkraise()
 # fenetre.bind('<Configure>', resize)
