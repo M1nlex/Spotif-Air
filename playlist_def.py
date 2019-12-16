@@ -1,5 +1,5 @@
 if __name__ == '__main__':
-    liste_essai = [ ["Jigsaw Falling Into Place", "Radiohead"], ["Classic Pursuit", "cYsmix"] ]
+    liste_essai = [ ["Jigsaw Falling Into Place", "Radiohead"], ["Classic Pursuit", "cYsmix"], ["Ma couille", "SAH"], ["wesh alors", "JUL"], ["AU DD", "PNL"]]
     from tkinter import *
     from tkinter import ttk
     from tkinter import font
@@ -13,6 +13,7 @@ def show_playlist(self, Programme, Name, Number, List, Genre):
 def return_to_playlist(self):
     fenetre2.tkraise()
     self.destroy()
+
 
 class Playlist(Frame):
 
@@ -42,6 +43,7 @@ class Playlist(Frame):
         self.LabelNumber = Label(self, textvariable = self.Number)
         self.LabelNumber.pack(side=RIGHT, fill=BOTH, expand=1)
 
+
 class MusicInfo(Frame):
 
     def __init__(self, Programme=None, Name="", Artist=""):
@@ -50,7 +52,7 @@ class MusicInfo(Frame):
         self.Artist=Artist
 
         Frame.__init__(self, Programme, bd=2, relief="groove")
-        self.pack(fill = BOTH)
+        self.pack(side=TOP, fill=X, expand=1, anchor=NE)
 
         self.labelname = Label(self, text=self.Name)
         self.labelname.pack(side=LEFT, fill=BOTH, expand=1)
@@ -62,7 +64,6 @@ class MusicInfo(Frame):
         self.labelartist.pack(side=RIGHT, fill=BOTH, expand=1)
 
 
-
 class Playlist_Content(Frame):
 
     def __init__(self, Programme=None, Name="", Number=0, List=[], Genre="Rien"):
@@ -72,8 +73,6 @@ class Playlist_Content(Frame):
         self.List = List
         self.Genre = StringVar()
 
-
-
         self.Name.set(Name)
         self.Number.set(Number)
         self.Genre.set(Genre)
@@ -81,7 +80,7 @@ class Playlist_Content(Frame):
         Frame.__init__(self, Programme, bd = 5)
         self.pack(fill = BOTH)
 
-        self.leavebutton = Button(self, text="Retour aux\nPlaylists", command=lambda:return_to_playlist(self), font=('Helvetica', '11'))
+        self.leavebutton = Button(self, text="Retour aux\nPlaylists", command=lambda:return_to_playlist(self), font=('Helvetica', '10'))
         self.leavebutton.grid(row=0, column=0, rowspan=2, sticky="ns")
 
         self.labelname = Label(self, textvariable=self.Name, font=('Helvetica', '20'), width=10)
@@ -99,11 +98,25 @@ class Playlist_Content(Frame):
         self.LabelGenre = Label(self, textvariable=self.Genre, font=('Helvetica', '10'))
         self.LabelGenre.grid(row=1, column=4)
 
-        self.Musics = Frame(self, relief=SUNKEN, bd=5, padx=5, pady=5,height=50)
-        self.Musics.grid(row=2, column=0, columnspan=4, sticky="nsew")
+        self.Musiclist = Frame(self)
+        self.Musiclist.grid(row=2, column=0, columnspan=5)
+
+
+        self.scrollmusic = Scrollbar(self.Musiclist, orient='vertical')
+        self.scrollmusic.pack(side=RIGHT, fill=Y)
+
+
+        self.Musics = Canvas(self.Musiclist, relief=SUNKEN, bd=2, height=100, width=400, background="blue", yscrollcommand = self.scrollmusic.set, scrollregion=(0, 0, 100, 500))
+        self.Musics.pack(side=RIGHT)
+        self.Musics.pack_propagate(0)
+
 
         for i in self.List:
             MusicInfo(self.Musics, Name=i[0], Artist=i[1])
+
+
+        #self.Musics.configure(scrollregion = self.Musics.bbox("all"))
+        self.scrollmusic.configure(command=self.Musics.yview)
 
 
 if __name__ == '__main__':
