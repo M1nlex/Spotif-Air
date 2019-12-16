@@ -129,8 +129,8 @@ class Mainwindow(Tk):
         self.frames[Player] = self.player
         self.player.grid(row=0, column=0, sticky="nsew")
 
-        pagetwo = PageTwo(self.FrameContent, self)
-        self.frames[PageTwo] = pagetwo
+        pagetwo = Recherche(self.FrameContent, self)
+        self.frames[Recherche] = pagetwo
         pagetwo.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
@@ -139,7 +139,7 @@ class Mainwindow(Tk):
         self.ButtonafficherFrameIntro.pack(side="left", expand="True", fill="x")
         self.ButtonafficherPlayer = Button(self.FrameButton, text="Player", command=lambda: self.show_frame(Player))
         self.ButtonafficherPlayer.pack(side="left", expand="True", fill="x")
-        self.ButtonafficherRecherche = Button(self.FrameButton, text="Recherche", command=lambda: self.show_frame(PageTwo))
+        self.ButtonafficherRecherche = Button(self.FrameButton, text="Recherche", command=lambda: self.show_frame(Recherche))
         self.ButtonafficherRecherche.pack(side="left", expand="True", fill="x")
 
     def show_frame(self, cont):
@@ -200,7 +200,7 @@ class Player(Musique, Frame):
         NextMusic.grid(row=6, column=3)
 
 
-class PageTwo(Frame):
+class Recherche(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
