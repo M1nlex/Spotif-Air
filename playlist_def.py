@@ -81,25 +81,25 @@ class Playlist_Content(Frame):
         Frame.__init__(self, Programme, bd = 5)
         self.pack(fill = BOTH)
 
-        self.leavebutton = Button(self, text="Playlists", command=lambda:return_to_playlist(self))
+        self.leavebutton = Button(self, text="Retour aux\nPlaylists", command=lambda:return_to_playlist(self), font=('Helvetica', '11'))
         self.leavebutton.grid(row=0, column=0, rowspan=2, sticky="ns")
 
-        self.labelname = Label(self, textvariable=self.Name,)
+        self.labelname = Label(self, textvariable=self.Name, font=('Helvetica', '20'), width=10)
         self.labelname.grid(row=0, column=1, rowspan=2, sticky="nsew")
 
-        self.Labelfornumber = Label(self, text="Nombre de musiques :")
+        self.Labelfornumber = Label(self, text="Nombre de musiques :", font=('Helvetica', '10'))
         self.Labelfornumber.grid(row=0, column=3)
 
-        self.LabelNumber = Label(self, textvariable=self.Number)
+        self.LabelNumber = Label(self, textvariable=self.Number, font=('Helvetica', '10'))
         self.LabelNumber.grid(row=0, column=4)
 
-        self.Labelforgenre = Label(self, text="Genre :")
+        self.Labelforgenre = Label(self, text="Genre :", font=('Helvetica', '10'))
         self.Labelforgenre.grid(row=1, column=3)
 
-        self.LabelGenre = Label(self, textvariable=self.Genre)
+        self.LabelGenre = Label(self, textvariable=self.Genre, font=('Helvetica', '10'))
         self.LabelGenre.grid(row=1, column=4)
 
-        self.Musics = Frame(self, relief=SUNKEN, bd=5, padx=5, pady=5)
+        self.Musics = Frame(self, relief=SUNKEN, bd=5, padx=5, pady=5,height=50)
         self.Musics.grid(row=2, column=0, columnspan=4, sticky="nsew")
 
         for i in self.List:
