@@ -13,6 +13,7 @@ sql_playlists = "SELECT Playlists.PL_Name, Playlists.PL_Nb, Playlists.PL_List, G
 sql_playlists_music_part1 = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE Music_Id IN "
 sql_playlists_music_part2=" AND Musique.Compo_Id = Compositeur.Compo_Id"
 sql_add_listen = "UPDATE Musique SET Nb_Listen = Nb_Listen + 1 WHERE Music_Name = ?"
+sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like '%?%' OR Compositeur.Compo_Name like '%?%') AND Musique.Music_Id=Compositeur.Compo_Id"
 
 
 connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
