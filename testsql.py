@@ -1,4 +1,5 @@
 import sqlite3
+#from tkinter import *
 
 
 sql_line_1 = "SELECT Playlists.PL_Name, Playlists.PL_Nb, Playlists.PL_List, Genre.Genre_Name FROM Playlists, Genre WHERE Playlists.PL_genre = Genre.Genre_Id"
@@ -30,3 +31,8 @@ connexion.close()
 
 m = [1,"gfrez",3,4]
 print(m[1:])
+
+"""fen = Tk()
+fen_1 = Toplevel()
+Label(fen_1, text="oui").pack()
+fen.mainloop()"""
