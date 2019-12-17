@@ -14,7 +14,7 @@ sql_playlists = "SELECT Playlists.PL_Name, Playlists.PL_Nb, Playlists.PL_List, G
 sql_playlists_music_part1 = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE Music_Id IN "
 sql_playlists_music_part2=" AND Musique.Compo_Id = Compositeur.Compo_Id"
 sql_add_listen = "UPDATE Musique SET Nb_Listen = Nb_Listen + 1 WHERE Music_Name = ?"
-sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like '%?%' OR Compositeur.Compo_Name like '%?%') AND Musique.Music_Id=Compositeur.Compo_Id"
+sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like ? OR Compositeur.Compo_Name like ? ) AND Musique.Music_Id=Compositeur.Compo_Id"
 
 
 connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
@@ -23,7 +23,6 @@ curseur = connexion.cursor()
 def on_closing():
     pygame.mixer_music.stop()
     os._exit(0)
-
 
 def show_playlist(self, Programme, Name, Number, List, Genre, fenetre_de_retour, fenetre_playlist):
     if (Name == "Erreur" and Number == 0):
@@ -34,9 +33,6 @@ def show_playlist(self, Programme, Name, Number, List, Genre, fenetre_de_retour,
 def return_to_playlist(self, fenetre_de_retour):
     fenetre_de_retour.tkraise()
     self.destroy()
-
-
-
 
 class Playlist(Frame):
 
@@ -68,7 +64,6 @@ class Playlist(Frame):
         self.LabelNumber = Label(self, textvariable = self.Number)
         self.LabelNumber.pack(side=RIGHT, fill=BOTH, expand=1)
 
-
 class MusicInfo(Frame):
 
     def __init__(self, Programme=None, Name="", Artist="", Nb_in_Playlist=0, List_for_playlist=[[]]):
@@ -89,7 +84,6 @@ class MusicInfo(Frame):
 
         self.labelartist = Label(self, text=self.Artist)
         self.labelartist.pack(side=RIGHT, fill=BOTH, expand=1)
-
 
 class Playlist_Content(Frame):
 
@@ -228,11 +222,11 @@ class Musique():
             if int(self.length) == float(f.player.currenttime.get()):
                 self.next_musique()
             if float(f.player.currenttime.get()) == 10 and self.count == 0:
-                print('add 1')
+                #print('add 1')
                 curseur.execute(sql_add_listen, [self.donnee])
                 connexion.commit()
                 self.count = 1
-            print(self.thread_kill)
+            #print(self.thread_kill)
 
 
     def next_musique(self):
@@ -249,7 +243,6 @@ class Musique():
     def set_vol(self, val):
         volume = int(val) / 100
         pygame.mixer.music.set_volume(volume)
-
 
 class Mainwindow(Tk):
     def __init__(self):
@@ -283,27 +276,62 @@ class Mainwindow(Tk):
         self.frames[Recherche] = self.recherche
         self.recherche.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame(StartPage)
+        self.show_frame(Player)
 
-        self.ButtonafficherFrameIntro = Button(self.FrameButton, text="Intro", command=lambda: self.show_frame(StartPage))
+        self.ButtonafficherFrameIntro = Button(self.FrameButton, text="Recherche", command=lambda: self.show_frame(StartPage))
         self.ButtonafficherFrameIntro.pack(side="left", expand="True", fill="x")
         self.ButtonafficherPlayer = Button(self.FrameButton, text="Player", command=lambda: self.show_frame(Player))
         self.ButtonafficherPlayer.pack(side="left", expand="True", fill="x")
-        self.ButtonafficherRecherche = Button(self.FrameButton, text="Recherche", command=lambda: self.show_frame(Recherche))
+        self.ButtonafficherRecherche = Button(self.FrameButton, text="Playlists", command=lambda: self.show_frame(Recherche))
         self.ButtonafficherRecherche.pack(side="left", expand="True", fill="x")
 
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
 
-
 class StartPage(Frame):
 
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, bg="blue")
 
-        Label(self, text="Welcome on Spotif'air", anchor='center', font=("TkDefaultFont", 30, "bold")).place(relx=0.5, rely=0.4, anchor=CENTER)
+        Label(self, text="Recherche", anchor='center', font=("TkDefaultFont", 30, "bold")).pack(side=TOP, fill=X, anchor=N)
+        self.searchvar = StringVar()
 
+        self.framesearch_entry_button = Frame(self)
+        self.framesearch_entry_button.pack(side=TOP, fill=X, expand=1, anchor=N)
+
+        self.Entrysearch = Entry(self.framesearch_entry_button, textvariable=self.searchvar)
+        self.Entrysearch.pack(side=LEFT, fill=X, expand=1)
+
+        self.buttonsearch = Button(self.framesearch_entry_button, text="Recherche")
+        self.buttonsearch.pack(side=RIGHT, fill=X)
+
+        self.FrameSearch = Frame(self, bd=5, relief="raise")
+
+        self.CanvasSearch = Canvas(self.FrameSearch)
+        self.viewport = Frame(self.CanvasSearch, width=300)
+        self.Search_scrollbar = Scrollbar(self.FrameSearch, orient='vertical', command=self.CanvasSearch.yview)
+        self.CanvasSearch.configure(yscrollcommand=self.Search_scrollbar.set)
+        self.Search_scrollbar.pack(side=RIGHT, fill=Y)
+        self.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
+        self.Search_window = self.CanvasSearch.create_window((100,0), window=self.viewport, anchor=NW, tags="self.viewport")
+        self.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+        self.FrameSearch.pack(side=TOP, fill=BOTH, expand=1, anchor=N)
+
+        self.buttonsearch.configure(command=lambda:self.Search_musics_artists())
+
+    def OnFrameConfigure(self, event):
+        self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
+
+    def Search_musics_artists(self):
+        for widget in self.viewport.winfo_children():
+            widget.destroy()
+        curseur.execute(sql_search_music, ('%'+self.searchvar.get()+'%', '%'+self.searchvar.get()+'%'))
+        search_result = curseur.fetchall()
+        for i in search_result:
+            MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i])
+        #self.viewport.bind("<Configure>", self.OnFrameConfigure)
 
 class Player(Musique, Frame):
 
@@ -359,7 +387,6 @@ class Player(Musique, Frame):
         f.player.start_time = 0
         f.player.playlist = p
         f.player.play(i=Nb_in_Playlist)
-
 
 class Recherche(Frame):
 
@@ -420,4 +447,3 @@ if __name__ == '__main__':
     f.mainloop()
     on_closing()
     connexion.close()
-
