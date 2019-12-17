@@ -4,6 +4,7 @@ import pygame
 import threading
 import time
 import sqlite3
+from playlist_def import *
 
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
 sql_image = "SELECT Image.Image_Link FROM Image,Musique WHERE ( Image.Image_Id = Musique.Image_Id AND Musique.Music_Name = ? )"
@@ -129,9 +130,9 @@ class Mainwindow(Tk):
         self.frames[Player] = self.player
         self.player.grid(row=0, column=0, sticky="nsew")
 
-        pagetwo = PageTwo(self.FrameContent, self)
-        self.frames[PageTwo] = pagetwo
-        pagetwo.grid(row=0, column=0, sticky="nsew")
+        self.recherche = Recherche(self.FrameContent, self)
+        self.frames[Recherche] = self.recherche
+        self.recherche.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(StartPage)
 
@@ -139,7 +140,7 @@ class Mainwindow(Tk):
         self.ButtonafficherFrameIntro.pack(side="left", expand="True", fill="x")
         self.ButtonafficherPlayer = Button(self.FrameButton, text="Player", command=lambda: self.show_frame(Player))
         self.ButtonafficherPlayer.pack(side="left", expand="True", fill="x")
-        self.ButtonafficherRecherche = Button(self.FrameButton, text="Recherche", command=lambda: self.show_frame(PageTwo))
+        self.ButtonafficherRecherche = Button(self.FrameButton, text="Recherche", command=lambda: self.show_frame(Recherche))
         self.ButtonafficherRecherche.pack(side="left", expand="True", fill="x")
 
     def show_frame(self, cont):
@@ -200,14 +201,48 @@ class Player(Musique, Frame):
         NextMusic.grid(row=6, column=3)
 
 
-class PageTwo(Frame):
+class Recherche(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        Label223 = Label(self, text="Recherche", anchor='center')
-        Label223.grid(row=0, column=0, sticky='nsew')
-        entry1 = ttk.Combobox(self)
-        entry1.grid(row=1, column=0)
+
+        self.Playlist_Content = Frame(self)
+        self.Playlist_Content.grid(row=0, column=0, sticky = "nsew")
+
+        self.Playlist_list = Frame(self)
+        self.Playlist_list.grid(row=0, column=0, sticky = "nsew")
+
+
+        self.Labeltitle = Label(self.Playlist_list, text="Playlists", font=('Helvetica', '20'))
+        self.Labeltitle.pack(fill=X)
+
+        self.FramePlaylist = Frame(self.Playlist_list)
+
+        self.CanvasPlaylist = Canvas(self.FramePlaylist, height=100, width=400)
+        self.viewport = Frame(self.CanvasPlaylist)
+        self.playlist_scrollbar = Scrollbar(self.FramePlaylist, orient='vertical', command=self.CanvasPlaylist.yview)
+        self.CanvasPlaylist.configure(yscrollcommand=self.playlist_scrollbar.set)
+
+        self.playlist_scrollbar.pack(side=RIGHT, fill=Y)
+        self.CanvasPlaylist.pack(side=LEFT, fill=BOTH, expand=1)
+        self.playlist_window = self.CanvasPlaylist.create_window((4,4), window=self.viewport, anchor=NW, tags="self.viewport")
+
+        self.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+
+
+        Playlist(Programme = self.viewport, Name="yes", Number=2, Genre="Rock")
+        Playlist(self.viewport, "essai", 4, [], "Classique")
+        Playlist(self.viewport)
+        Playlist(self.viewport, Name="espoir")
+        Playlist(self.viewport, Name="espoir 2")
+        Playlist(self.viewport, Name="espoir 321")
+
+        self.FramePlaylist.pack()
+
+
+    def OnFrameConfigure(self, event):
+        self.CanvasPlaylist.configure(scrollregion=self.CanvasPlaylist.bbox("all"))
 
 
 def on_closing():
@@ -217,3 +252,5 @@ def on_closing():
 
 f = Mainwindow()
 f.mainloop()
+
+connexion.close()

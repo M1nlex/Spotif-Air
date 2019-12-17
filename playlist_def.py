@@ -1,8 +1,6 @@
-if __name__ == '__main__':
-    liste_essai = [ ["Jigsaw Falling Into Place", "Radiohead"], ["Classic Pursuit", "cYsmix"], ["Ma couille", "SAH"], ["wesh alors", "JUL"], ["AU DD", "PNL"]]
-    from tkinter import *
-    from tkinter import ttk
-    from tkinter import font
+from tkinter import *
+from tkinter import ttk
+from tkinter import font
 
 def show_playlist(self, Programme, Name, Number, List, Genre):
     if (Name == "Erreur" and Number == 0):
@@ -120,6 +118,7 @@ class Playlist_Content(Frame):
 
 
 if __name__ == '__main__':
+    liste_essai = [ ["Jigsaw Falling Into Place", "Radiohead"], ["Classic Pursuit", "cYsmix"], ["Ma couille", "SAH"], ["wesh alors", "JUL"], ["AU DD", "PNL"]]
     main = Tk()
 
     fenetre1 = Frame(main)
