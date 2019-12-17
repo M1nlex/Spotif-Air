@@ -188,6 +188,7 @@ class Musique():
             self.i = i
 
             self.donnee = (self.playlist[self.i])
+            f.player.MusicTitle.config(text=self.donnee)
             curseur.execute(sql_music, [self.donnee])
             file = curseur.fetchone()[0]
             #print(file)
@@ -329,8 +330,8 @@ class Player(Musique, Frame):
         self.scaletime = Scale(self, orient='horizontal', from_=0, to=360, resolution=0.1, length=350, label='time', variable=self.currenttime, command=lambda x: self.set_time())
         self.scaletime.grid(row=4, column=1, columnspan=3)
 
-        MusicTitle = Label(self, text="Spotif-Air")
-        MusicTitle.grid(row=5, column=1, columnspan=3)
+        self.MusicTitle = Label(self, text="Spotif-Air")
+        self.MusicTitle.grid(row=5, column=1, columnspan=3)
 
         MusicTime = Label(self)
         MusicTime.grid(row=5, column=3, columnspan=3)
@@ -426,5 +427,6 @@ class Recherche(Frame):
 
 if __name__ == '__main__':
     f = Mainwindow()
+    f.title("Spotif'Air")
     f.mainloop()
     connexion.close()
