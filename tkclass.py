@@ -123,10 +123,28 @@ class Playlist_Content(Frame):
         self.LabelGenre.grid(row=1, column=4)
 
         self.Musiclist = Frame(self)
-        self.Musiclist.grid(row=2, column=0, columnspan=5)
+        self.Musiclist.grid(row=2, column=0, columnspan=5, sticky = "nsew")
 
+        self.FrameMusic = Frame(self.Musiclist)
 
-        self.scrollmusic = Scrollbar(self.Musiclist, orient='vertical')
+        self.CanvasMusic = Canvas(self.FrameMusic, height=100, width=400)
+        self.viewport = Frame(self.CanvasMusic, width=300)
+        self.music_scrollbar = Scrollbar(self.FrameMusic, orient='vertical', command=self.CanvasMusic.yview)
+        self.CanvasMusic.configure(yscrollcommand=self.music_scrollbar.set)
+
+        self.music_scrollbar.pack(side=RIGHT, fill=Y)
+        self.CanvasMusic.pack(side=LEFT, fill=BOTH, expand=1)
+        self.music_window = self.CanvasMusic.create_window((100,0), window=self.viewport, anchor=NW, tags="self.viewport")
+
+        self.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+        l=0
+        for i in self.List:
+            MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=l, List_for_playlist=self.List)
+            l += 1
+
+        self.FrameMusic.pack()
+        """self.scrollmusic = Scrollbar(self.Musiclist, orient='vertical')
         self.scrollmusic.pack(side=RIGHT, fill=Y)
 
 
@@ -141,7 +159,9 @@ class Playlist_Content(Frame):
 
 
         #self.Musics.configure(scrollregion = self.Musics.bbox("all"))
-        self.scrollmusic.configure(command=self.Musics.yview)
+        self.scrollmusic.configure(command=self.Musics.yview)"""
+    def OnFrameConfigure(self, event):
+        self.CanvasMusic.configure(scrollregion=self.CanvasMusic.bbox("all"))
 
 class Musique():
     def __init__(self, playlist=['Etude Op. 25 No. 11 (Winter Wind)', 'Mii Channel Theme']):
