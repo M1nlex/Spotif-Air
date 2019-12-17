@@ -144,22 +144,7 @@ class Playlist_Content(Frame):
             l += 1
 
         self.FrameMusic.pack()
-        """self.scrollmusic = Scrollbar(self.Musiclist, orient='vertical')
-        self.scrollmusic.pack(side=RIGHT, fill=Y)
 
-
-        self.Musics = Canvas(self.Musiclist, relief=SUNKEN, bd=2, height=100, width=400, background="blue", yscrollcommand = self.scrollmusic.set, scrollregion=(0, 0, 100, 500))
-        self.Musics.pack(side=RIGHT)
-        self.Musics.pack_propagate(0)
-
-        l=0
-        for i in self.List:
-            MusicInfo(self.Musics, Name=i[0], Artist=i[1], Nb_in_Playlist=l, List_for_playlist=self.List)
-            l += 1
-
-
-        #self.Musics.configure(scrollregion = self.Musics.bbox("all"))
-        self.scrollmusic.configure(command=self.Musics.yview)"""
     def OnFrameConfigure(self, event):
         self.CanvasMusic.configure(scrollregion=self.CanvasMusic.bbox("all"))
 
@@ -406,15 +391,6 @@ class Recherche(Frame):
 
         for i in self.result_f:
             Playlist(Programme=self.viewport, Name=i[0], Number=i[1], List=i[2], Genre=i[3], fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-
-        """
-        Playlist(Programme = self.viewport, Name="yes", Number=2, Genre="Rock", fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-        Playlist(self.viewport, "essai", 4, [ ["Jigsaw Falling Into Place", "Radiohead"], ["Classic Pursuit", "cYsmix"], ["Ma couille", "SAH"], ["wesh alors", "JUL"], ["AU DD", "PNL"] ], "Classique", fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-        Playlist(self.viewport, fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-        Playlist(self.viewport, Name="espoir", fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-        Playlist(self.viewport, Name="espoir 2", fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-        Playlist(self.viewport, Name="espoir 321", fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
-        """
 
         self.FramePlaylist.pack()
 
