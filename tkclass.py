@@ -407,3 +407,4 @@ if __name__ == '__main__':
     f.title("Spotif'Air")
     f.mainloop()
     connexion.close()
+    pygame.mixer_music.stop()
