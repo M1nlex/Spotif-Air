@@ -288,7 +288,7 @@ class StartPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
-        Label(self, text="Welcome on Spotif'air", anchor='center').grid(row=0, column=0, sticky='nsew')
+        Label(self, text="Welcome on Spotif'air", anchor='center', font=("TkDefaultFont", 30, "bold")).place(relx=0.5, rely=0.4, anchor=CENTER)
 
 
 class Player(Musique, Frame):
