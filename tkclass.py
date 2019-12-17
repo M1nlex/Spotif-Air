@@ -31,12 +31,7 @@ def return_to_playlist(self, fenetre_de_retour):
     fenetre_de_retour.tkraise()
     self.destroy()
 
-def Launch_music(List_for_playlist, Nb_in_Playlist=0):
-    p = []
-    for i in List_for_playlist:
-        p.append(i[0])
-    abc = Musique(p)
-    Musique.play(abc, i=Nb_in_Playlist)
+
 
 
 class Playlist(Frame):
@@ -85,7 +80,7 @@ class MusicInfo(Frame):
         self.labelname = Label(self, text=self.Name)
         self.labelname.pack(side=LEFT, fill=BOTH, expand=1)
 
-        self.Playbutton = Button(self, text="Jouer", command=lambda:Launch_music(self.List_for_playlist, self.Nb_in_Playlist))
+        self.Playbutton = Button(self, text="Jouer", command=lambda:f.player.Launch_music(self.List_for_playlist, self.Nb_in_Playlist))
         self.Playbutton.pack(side=RIGHT, fill=BOTH)
 
         self.labelartist = Label(self, text=self.Artist)
@@ -162,7 +157,7 @@ class Musique():
         self.a = False
 
     def play(self, i=0):
-
+        print(self.playlist, pygame.mixer_music.get_busy() == 1, self.pause == True)
         if pygame.mixer_music.get_busy() == 1 or self.pause == True:
             Musique.pause(self)
         else:
@@ -334,6 +329,17 @@ class Player(Musique, Frame):
         NextMusic = Button(self, image=photonext, command=lambda: self.next_musique())
         NextMusic.image = photonext
         NextMusic.grid(row=6, column=3)
+
+    def Launch_music(self, List_for_playlist, Nb_in_Playlist=0):
+        p = []
+        for i in List_for_playlist:
+            p.append(i[0])
+        #abc = Musique(p)
+        pygame.mixer_music.stop()
+        #f.player.currenttime.set(0)
+        f.player.start_time = 0
+        f.player.playlist = p
+        f.player.play(i=Nb_in_Playlist)
 
 
 class Recherche(Frame):
