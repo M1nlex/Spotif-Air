@@ -4,6 +4,7 @@ import pygame
 import threading
 import time
 import sqlite3
+import os
 # from playlist_def import *
 
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
@@ -20,7 +21,8 @@ curseur = connexion.cursor()
 
 def on_closing():
     pygame.mixer_music.stop()
-    sys.exit()
+    os._exit(0)
+
 
 def show_playlist(self, Programme, Name, Number, List, Genre, fenetre_de_retour, fenetre_playlist):
     if (Name == "Erreur" and Number == 0):
@@ -162,6 +164,7 @@ class Musique():
         pygame.mixer.init()
         self.a = False
         self.count = 0
+        self.thread_kill = False
 
     def play(self, i=0):
         #print(self.playlist, pygame.mixer_music.get_busy() == 1, self.pause == True)
@@ -228,6 +231,8 @@ class Musique():
                 curseur.execute(sql_add_listen, [self.donnee])
                 connexion.commit()
                 self.count = 1
+            print(self.thread_kill)
+
 
     def next_musique(self):
         pygame.mixer_music.stop()
@@ -412,6 +417,6 @@ if __name__ == '__main__':
     f = Mainwindow()
     f.title("Spotif'Air")
     f.mainloop()
+    on_closing()
     connexion.close()
-    pygame.mixer_music.stop()
 
