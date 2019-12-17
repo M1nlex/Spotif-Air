@@ -157,7 +157,7 @@ class Musique():
         self.a = False
 
     def play(self, i=0):
-        print(self.playlist, pygame.mixer_music.get_busy() == 1, self.pause == True)
+        #print(self.playlist, pygame.mixer_music.get_busy() == 1, self.pause == True)
         if pygame.mixer_music.get_busy() == 1 or self.pause == True:
             Musique.pause(self)
         else:
@@ -220,12 +220,12 @@ class Musique():
         pygame.mixer_music.stop()
         self.start_time = 0
         f.player.currenttime.set(0)
-        self.play(self.i+1)
+        self.play((self.i+1) % (len(self.playlist)))
 
     def previous(self):
         pygame.mixer_music.stop()
         self.start_time = 0
-        self.play(self.i-1)
+        self.play((self.i-1) % (len(self.playlist)))
 
     def set_vol(self, val):
         volume = int(val) / 100
