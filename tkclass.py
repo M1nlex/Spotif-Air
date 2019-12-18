@@ -15,6 +15,9 @@ sql_playlists_music_part1 = "SELECT Musique.Music_Name, Compositeur.Compo_Name F
 sql_playlists_music_part2=" AND Musique.Compo_Id = Compositeur.Compo_Id"
 sql_add_listen = "UPDATE Musique SET Nb_Listen = Nb_Listen + 1 WHERE Music_Name = ?"
 sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like ? OR Compositeur.Compo_Name like ? ) AND Musique.Music_Id=Compositeur.Compo_Id"
+sql_test_music_exist = "SELECT"
+
+
 
 
 connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
@@ -38,7 +41,7 @@ def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
     if Nom=="" or Lien=="" or Compositeur=="" or Genre=="" or not(".ogg" in Lien):
         messagebox.showerror("Erreur","Information(s) manquante(s)")
         return
-    
+
 
 
 class Playlist(Frame):
