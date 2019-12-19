@@ -297,20 +297,20 @@ class Mainwindow(Tk):
         self.FrameContent = Frame(mainframe, relief='raise', bg='blue', bd=5)
         self.FrameContent.grid(row=1, column=0, columnspan=5, sticky='ew')
 
-        start = StartPage(self.FrameContent, self)
-        self.frames[StartPage] = start
+        start = Recherche_Music(self.FrameContent, self)
+        self.frames[Recherche_Music] = start
         start.grid(row=0, column=0, sticky="nsew")
 
-        start = StartPage(self.FrameContent, self)
-        self.frames[StartPage] = start
-        start.grid(row=0, column=0, sticky="nsew")
+        recherche_music = Recherche_Music(self.FrameContent, self)
+        self.frames[Recherche_Music] = recherche_music
+        recherche_music.grid(row=0, column=0, sticky="nsew")
 
         self.player = Player(self.FrameContent, self)
         self.frames[Player] = self.player
         self.player.grid(row=0, column=0, sticky="nsew")
 
-        self.recherche = Recherche(self.FrameContent, self)
-        self.frames[Recherche] = self.recherche
+        self.recherche = Recherche_Playlist(self.FrameContent, self)
+        self.frames[Recherche_Playlist] = self.recherche
         self.recherche.grid(row=0, column=0, sticky="nsew")
 
         self.ajout = Ajout(self.FrameContent, self)
@@ -321,15 +321,19 @@ class Mainwindow(Tk):
         self.frames[Stat] = self.stat
         self.stat.grid(row=0, column=0, sticky='nsew')
 
-        self.show_frame(Player)
+        self.start = Start(self.FrameContent, self)
+        self.frames[Start] = self.start
+        self.start.grid(row=0, column=0, sticky='nsew')
+
+        self.show_frame(Start)
 
         self.ButtonafficherFrameIntro = Button(self.FrameButton, text="Recherche",
-                                               command=lambda: self.show_frame(StartPage))
+                                               command=lambda: self.show_frame(Recherche_Music))
         self.ButtonafficherFrameIntro.pack(side="left", expand="True", fill="x")
         self.ButtonafficherPlayer = Button(self.FrameButton, text="Player", command=lambda: self.show_frame(Player))
         self.ButtonafficherPlayer.pack(side="left", expand="True", fill="x")
         self.ButtonafficherRecherche = Button(self.FrameButton, text="Playlists",
-                                              command=lambda: self.show_frame(Recherche))
+                                              command=lambda: self.show_frame(Recherche_Playlist))
         self.ButtonafficherRecherche.pack(side="left", expand="True", fill="x")
         self.Buttonafficherajout = Button(self.FrameButton, text="Ajout musiques/playlists",
                                           command=lambda: self.show_frame(Ajout))
@@ -348,7 +352,15 @@ class Mainwindow(Tk):
         frame.tkraise()
 
 
-class StartPage(Frame):
+class Start(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+        Label(self, text="Bienvenue sur Spotif'Air", anchor='center', font=("TkDefaultFont", 25, "bold")).place(relx=0.5, rely=0.45, anchor=CENTER)
+
+
+
+
+class Recherche_Music(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
@@ -451,7 +463,7 @@ class Player(Musique, Frame):
         f.player.play(i=Nb_in_Playlist)
 
 
-class Recherche(Frame):
+class Recherche_Playlist(Frame):
 
     def __init__(self, parent, controller):
 
@@ -575,7 +587,7 @@ class Stat(Frame):
         self.framesearch_entry_button = Frame(self)
         self.framesearch_entry_button.pack(side=TOP, fill=X, expand=1, anchor=N)
         Label(self.framesearch_entry_button, text='Top 10 : ').pack(side=LEFT)
-        self.Entrysearch = ttk.Combobox(self.framesearch_entry_button, values=["Song", "Artiste", "Genre"])
+        self.Entrysearch = ttk.Combobox(self.framesearch_entry_button, values=["Music", "Artiste", "Genre"])
         self.Entrysearch.pack(side=LEFT, fill=X, expand=1)
 
         self.buttonsearch = Button(self.framesearch_entry_button, text="Recherche", command=self.top10)
