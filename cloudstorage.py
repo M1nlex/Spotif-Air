@@ -45,5 +45,3 @@ def download_random_file(bucketName, bucketFolder, localFolder, name):
     fileName = blob.name.split('/')[-1]
     blob.download_to_filename(localFolder + fileName)
     return f'{fileName} downloaded from bucket.'
-
-
