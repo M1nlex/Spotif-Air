@@ -15,8 +15,8 @@ sql_playlists_music_part1 = "SELECT Musique.Music_Name, Compositeur.Compo_Name F
 sql_playlists_music_part2=" AND Musique.Compo_Id = Compositeur.Compo_Id"
 sql_add_listen = "UPDATE Musique SET Nb_Listen = Nb_Listen + 1 WHERE Music_Name = ?"
 sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like ? OR Compositeur.Compo_Name like ? ) AND Musique.Music_Id=Compositeur.Compo_Id"
-sql_test_music_exist = "SELECT"
-
+sql_test_music_exist = "SELECT COUNT(1) FROM Musique WHERE Music_Name = ? AND Compo_Id= ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ) AND Album_Id= ( SELECT Album_Id FROM Album WHERE Album_Name= ? ) AND Genre_Id= ( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? )"
+sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ), ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 
 
 
@@ -40,8 +40,19 @@ def return_to_playlist(self, fenetre_de_retour):
 def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
     if Nom=="" or Lien=="" or Compositeur=="" or Genre=="" or not(".ogg" in Lien):
         messagebox.showerror("Erreur","Information(s) manquante(s)")
-        return
-
+    elif curseur.execute(sql_test_music_exist, (Nom, Compositeur, Album, Genre) ).fetchone()[0] == 1:
+        messagebox.showwarning("Erreur", "Ce morceau existe déjà dans la base de donnée")
+    else:
+        if curseur.execute("SELECT COUNT(1) FROM Compositeur WHERE Compo_Name= ?", (Compositeur,) ).fetchone()[0] == 0:
+            curseur.execute("INSERT INTO Compositeur(Compo_Name) VALUES (?)", (Compositeur,) )
+        if curseur.execute("SELECT COUNT(1) FROM Album WHERE Album_Name=?", (Album,) ).fetchone()[0] == 0:
+            curseur.execute("INSERT INTO Album(Album_Name) VALUES (?)", (Album,) )
+            curseur.execute("INSERT INTO Image(Image_Name, Image_Link) VALUES (?, ?)", (Album, Image) )
+        if curseur.execute("SELECT COUNT(1) FROM Genre WHERE Genre_Name=?", (Genre,) ).fetchone()[0] == 0:
+            curseur.execute("INSERT INTO Genre(Genre_Name) VALUES (?)", (Genre,) )
+        curseur.execute(sql_add_music, (Nom, Lien, Compositeur, Album, Album, Genre) )
+        connexion.commit()
+        messagebox.showinfo("Succès", "la musique a bien été ajoutée à la base de donnée.")
 
 
 class Playlist(Frame):
@@ -514,7 +525,7 @@ class Ajout(Frame):
         fen_add_music.buttonleave = Button(fen_add_music, text="Fermer", command=fen_add_music.destroy)
         fen_add_music.buttonleave.grid(row=7,column=0)
 
-        fen_add_music.buttonadd = Button(fen_add_music, text="Ajouter")
+        fen_add_music.buttonadd = Button(fen_add_music, text="Ajouter", command=lambda:add_music(fen_add_music.Name.get(), fen_add_music.Lien.get(), fen_add_music.Compositeur.get(), fen_add_music.Album.get(), fen_add_music.Image.get(), fen_add_music.Genre.get() ))
         fen_add_music.buttonadd.grid(row=7,column=1)
 
 
