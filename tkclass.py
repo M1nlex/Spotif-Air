@@ -6,6 +6,7 @@ import time
 import sqlite3
 import os
 from tkinter import messagebox
+import cloudstorage
 
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
 sql_image = "SELECT Image.Image_Link FROM Image,Musique WHERE ( Image.Image_Id = Musique.Image_Id AND Musique.Music_Name = ? )"
@@ -17,10 +18,6 @@ sql_add_listen = "UPDATE Musique SET Nb_Listen = Nb_Listen + 1 WHERE Music_Name 
 sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like ? OR Compositeur.Compo_Name like ? ) AND Musique.Music_Id=Compositeur.Compo_Id"
 sql_test_music_exist = "SELECT COUNT(1) FROM Musique WHERE Music_Name = ? AND Compo_Id= ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ) AND Album_Id= ( SELECT Album_Id FROM Album WHERE Album_Name= ? ) AND Genre_Id= ( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? )"
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ), ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
-
-
-
-
 
 
 def on_closing():
@@ -230,8 +227,12 @@ class Musique():
             f.player.MusicTitle.config(text=self.donnee)
             curseur.execute(sql_music, [self.donnee])
             file = curseur.fetchone()[0]
-            # print(file)
-            pygame.mixer.music.load(file)
+            print(file)
+            try:
+                pygame.mixer.music.load(file)
+            except:
+                cloudstorage.download_random_file('spotif-air', 'Song', './Song/', file)
+                pygame.mixer.music.load(file)
 
             curseur.execute(sql_image, [self.donnee])
             Lien_img = curseur.fetchone()[0]
