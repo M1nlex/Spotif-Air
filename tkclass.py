@@ -282,7 +282,12 @@ class Musique():
 
             curseur.execute(sql_image, [self.donnee])
             Lien_img = curseur.fetchone()[0]
-            music_img = PhotoImage(file=Lien_img)
+            print(Lien_img)
+            try:
+                music_img = PhotoImage(file=Lien_img)
+            except:
+                cloudstorage.download_random_file('spotif-air', 'Music_Img', './Music_Img/', Lien_img)
+                music_img = PhotoImage(file=Lien_img)
             f.player.canvasimage.delete(f.player.image_on_canvas)
             f.player.canvasimage.create_image(20, 20, anchor=NW, image=music_img)
             f.player.canvasimage.image = music_img
