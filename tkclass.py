@@ -19,12 +19,13 @@ sql_test_music_exist = "SELECT COUNT(1) FROM Musique WHERE Music_Name = ? AND Co
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ), ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 
 
-
-connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
+connexion = sqlite3.connect("basededonnees.db")
 curseur = connexion.cursor()
 
 def on_closing():
     pygame.mixer_music.stop()
+    connexion.close()
+    print('end')
     os._exit(0)
 
 def show_playlist(self, Programme, Name, Number, List, Genre, fenetre_de_retour, fenetre_playlist):
@@ -539,4 +540,4 @@ if __name__ == '__main__':
     f.title("Spotif'Air")
     f.mainloop()
     on_closing()
-    connexion.close()
+
