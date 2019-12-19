@@ -20,14 +20,11 @@ storage_client = storage.Client()
 bucket = storage_client.get_bucket('spotif-air')
 
 
-def upload_files(bucketName):
+def upload_files(bucketName, bucketFolder, localFolder, name):
     """Upload files to GCP bucket."""
-    files = [f for f in listdir(localFolder) if isfile(join(localFolder, f))]
-    for file in files:
-        localFile = localFolder + file
-        blob = bucket.blob(bucketFolder + file)
-        blob.upload_from_filename(localFile)
-    return f'Uploaded {files} to "{bucketName}" bucket.'
+    blob = bucket.blob(bucketFolder +'/' + name)
+    blob.upload_from_filename(localFolder + name)
+    return f'Uploaded {name} to "{bucketName}" bucket.'
 
 def list_files(bucketName):
     """List all files in GCP bucket."""
@@ -43,7 +40,6 @@ def download_random_file(bucketName, bucketFolder, localFolder, name):
     for i in range(len(fileList)):
         print(fileList[i], str(name))
         if fileList[i] == str(name):
-
             song = i
             break
 
