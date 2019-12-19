@@ -639,6 +639,9 @@ class Ajout(Frame):
     def OnFrameConfigure(self, event):
         self.fen_add_playlist.CanvasSearch.configure(scrollregion=self.fen_add_playlist.CanvasSearch.bbox("all"))
 
+
+class Stat(Frame):
+    
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
 
@@ -656,7 +659,6 @@ class Ajout(Frame):
     def top10(self):
         recherche = self.Entrysearch.get()
         print(recherche)
-
 
 
 
