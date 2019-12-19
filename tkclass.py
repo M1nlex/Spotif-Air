@@ -317,6 +317,10 @@ class Mainwindow(Tk):
         self.frames[Ajout] = self.ajout
         self.ajout.grid(row=0, column=0, sticky='nsew')
 
+        self.stat = Stat(self.FrameContent, self)
+        self.frames[Stat] = self.stat
+        self.stat.grid(row=0, column=0, sticky='nsew')
+
         self.show_frame(Player)
 
         self.ButtonafficherFrameIntro = Button(self.FrameButton, text="Recherche",
@@ -330,6 +334,14 @@ class Mainwindow(Tk):
         self.Buttonafficherajout = Button(self.FrameButton, text="Ajout musiques/playlists",
                                           command=lambda: self.show_frame(Ajout))
         self.Buttonafficherajout.pack(side="left", expand="True", fill="x")
+
+        self.Buttonstat = Button(self.FrameButton, text="Stat",
+                                          command=lambda: self.show_frame(Stat))
+        self.Buttonstat.pack(side="left", expand="True", fill="x")
+
+
+
+
 
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -551,6 +563,30 @@ class Ajout(Frame):
                                                                    fen_add_music.Album.get(), fen_add_music.Image.get(),
                                                                    fen_add_music.Genre.get()))
         fen_add_music.buttonadd.grid(row=7, column=1)
+
+
+class Stat(Frame):
+
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent, bg="blue")
+
+        Label(self, text="Statistique", anchor='center', font=("TkDefaultFont", 30, "bold")).pack(side=TOP, fill=X, anchor=N)
+
+        self.framesearch_entry_button = Frame(self)
+        self.framesearch_entry_button.pack(side=TOP, fill=X, expand=1, anchor=N)
+        Label(self.framesearch_entry_button, text='Top 10 : ').pack(side=LEFT)
+        self.Entrysearch = ttk.Combobox(self.framesearch_entry_button, values=["Song", "Artiste", "Genre"])
+        self.Entrysearch.pack(side=LEFT, fill=X, expand=1)
+
+        self.buttonsearch = Button(self.framesearch_entry_button, text="Recherche", command=self.top10)
+        self.buttonsearch.pack(side=RIGHT, fill=X)
+
+    def top10(self):
+        recherche = self.Entrysearch.get()
+        print(recherche)
+
+
+
 
 
 # ---------------------------------------------------------------------------------------------------------------
