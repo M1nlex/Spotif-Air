@@ -18,8 +18,9 @@ sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musiq
 sql_test_music_exist = "SELECT COUNT(1) FROM Musique WHERE Music_Name = ? AND Compo_Id= ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ) AND Album_Id= ( SELECT Album_Id FROM Album WHERE Album_Name= ? ) AND Genre_Id= ( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? )"
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ), ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 
-connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
-curseur = connexion.cursor()
+
+
+
 
 
 def on_closing():
@@ -59,6 +60,9 @@ def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
         connexion.commit()
         messagebox.showinfo("Succès", "la musique a bien été ajoutée à la base de donnée.")
 
+def add_playlist():
+    pass
+
 
 class Playlist(Frame):
 
@@ -97,11 +101,13 @@ class Playlist(Frame):
 
 class MusicInfo(Frame):
 
-    def __init__(self, Programme=None, Name="", Artist="", Nb_in_Playlist=0, List_for_playlist=[[]]):
-        self.Name = Name
-        self.Artist = Artist
+    def __init__(self, Programme=None, Name="", Artist="", Nb_in_Playlist=0, List_for_playlist=[[]], add_option=0):
+
+        self.Name=Name
+        self.Artist=Artist
         self.Nb_in_Playlist = Nb_in_Playlist
         self.List_for_playlist = List_for_playlist
+        self.add_option = add_option
 
         Frame.__init__(self, Programme, bd=2, relief="groove")
         self.pack(side=TOP, fill=X, expand=1, anchor=NE)
@@ -109,9 +115,12 @@ class MusicInfo(Frame):
         self.labelname = Label(self, text=self.Name)
         self.labelname.pack(side=LEFT, fill=BOTH, expand=1)
 
-        self.Playbutton = Button(self, text="Jouer",
-                                 command=lambda: f.player.Launch_music(self.List_for_playlist, self.Nb_in_Playlist))
-        self.Playbutton.pack(side=RIGHT, fill=BOTH)
+        if self.add_option == 0:
+            self.Playbutton = Button(self, text="Jouer", command=lambda:f.player.Launch_music(self.List_for_playlist, self.Nb_in_Playlist))
+            self.Playbutton.pack(side=RIGHT, fill=BOTH)
+        else:
+            self.Addbutton = Button(self, text="Ajouter", command=lambda:Ajout.playlist_add_music(name=self.Name, artist=self.Artist))
+            self.Addbutton.pack(side=RIGHT, fill=BOTH)
 
         self.labelartist = Label(self, text=self.Artist)
         self.labelartist.pack(side=RIGHT, fill=BOTH, expand=1)
@@ -343,6 +352,10 @@ class Mainwindow(Tk):
                                           command=lambda: self.show_frame(Stat))
         self.Buttonstat.pack(side="left", expand="True", fill="x")
 
+
+
+
+
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
@@ -512,12 +525,15 @@ class Recherche_Playlist(Frame):
 class Ajout(Frame):
 
     def __init__(self, parent, controller):
-        Frame.__init__(self, parent)
+
+        self.List_playlist_creation = []
+
+        Frame.__init__(self,parent)
 
         self.Button_add_music = Button(self, text="Ajouter une musique", command=self.ajout_add_music)
         self.Button_add_music.pack(side=TOP, fill=BOTH, expand=1)
 
-        self.Button_add_playlist = Button(self, text="Ajouter une playlist")
+        self.Button_add_playlist = Button(self, text="Ajouter une playlist", command=self.ajout_add_playlist)
         self.Button_add_playlist.pack(side=TOP, fill=BOTH, expand=1)
 
         self.Button_edit_musics = Button(self, text="Modifier les musiques")
@@ -525,6 +541,10 @@ class Ajout(Frame):
 
         self.Button_edit_playlists = Button(self, text="Modifier les playlists")
         self.Button_edit_playlists.pack(side=TOP, fill=BOTH, expand=1)
+
+    def playlist_add_music(self, name, artist):
+        self.List_playlist_creation.append([name, artist])
+        print(self.List_playlist_creation)
 
     def ajout_add_music(self):
         fen_add_music = Toplevel()
@@ -572,9 +592,56 @@ class Ajout(Frame):
                                                                    fen_add_music.Genre.get()))
         fen_add_music.buttonadd.grid(row=7, column=1)
 
+    def ajout_add_playlist(self):
+
+        self.fen_add_playlist = Toplevel()
+
+        self.fen_add_playlist.Name = StringVar()
+        self.fen_add_playlist.List = []
+        self.fen_add_playlist.Genre = StringVar()
+
+        Label(self.fen_add_playlist, text="Ajouter une playlist", font=('Helvetica', '20')).grid(row=0, column=0, columnspan=2)
+
+        Label(self.fen_add_playlist, text="Nom :").grid(row=1,column=0)
+        self.fen_add_playlist.EntryName = Entry(self.fen_add_playlist, textvariable=self.fen_add_playlist.Name)
+        self.fen_add_playlist.EntryName.grid(row=1,column=1)
+
+        Label(self.fen_add_playlist, text="Genre :").grid(row=2,column=0)
+        self.fen_add_playlist.EntryGenre = Entry(self.fen_add_playlist, textvariable=self.fen_add_playlist.Genre)
+        self.fen_add_playlist.EntryGenre.grid(row=2,column=1)
+
+        self.fen_add_playlist.FrameSearch = Frame(self.fen_add_playlist, bd=5, relief="raise")
+
+        self.fen_add_playlist.CanvasSearch = Canvas(self.fen_add_playlist.FrameSearch)
+        self.fen_add_playlist.viewport = Frame(self.fen_add_playlist.CanvasSearch, width=300)
+        self.fen_add_playlist.Search_scrollbar = Scrollbar(self.fen_add_playlist.FrameSearch, orient='vertical', command=self.fen_add_playlist.CanvasSearch.yview)
+        self.fen_add_playlist.CanvasSearch.configure(yscrollcommand=self.fen_add_playlist.Search_scrollbar.set)
+        self.fen_add_playlist.Search_scrollbar.pack(side=RIGHT, fill=Y)
+        self.fen_add_playlist.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
+        self.fen_add_playlist.Search_window = self.fen_add_playlist.CanvasSearch.create_window((100,0), window=self.fen_add_playlist.viewport, anchor=NW, tags="self.fen_add_playlist.viewport")
+        self.fen_add_playlist.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+        self.fen_add_playlist.FrameSearch.grid(row=3,column=0,columnspan=2)
+
+        self.fen_add_playlist.buttonleave = Button(self.fen_add_playlist, text="Fermer", command=self.fen_add_playlist.destroy)
+        self.fen_add_playlist.buttonleave.grid(row=7,column=0)
+
+        self.fen_add_playlist.buttonadd = Button(self.fen_add_playlist, text="Ajouter", command=lambda:add_playlist())
+        self.fen_add_playlist.buttonadd.grid(row=7,column=1)
+
+        for widget in self.fen_add_playlist.viewport.winfo_children():
+            widget.destroy()
+        curseur.execute(sql_search_music, ('%', '%'))
+        search_result = curseur.fetchall()
+        for i in search_result:
+            MusicInfo(self.fen_add_playlist.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
+
+    def OnFrameConfigure(self, event):
+        self.fen_add_playlist.CanvasSearch.configure(scrollregion=self.fen_add_playlist.CanvasSearch.bbox("all"))
+
 
 class Stat(Frame):
-
+    
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
 
@@ -596,11 +663,12 @@ class Stat(Frame):
 
 
 
-
 # ---------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+    connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
+    curseur = connexion.cursor()
     f = Mainwindow()
     f.title("Spotif'Air")
     f.mainloop()
