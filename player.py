@@ -3,7 +3,7 @@ from winsound import *
 from tkinter import ttk
 import sqlite3
 
-filename = "song/wiimusic.wav"
+filename = "Song/wiimusic.wav"
 
 
 def playmusic(file):
