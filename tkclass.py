@@ -18,7 +18,7 @@ sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musiq
 sql_test_music_exist = "SELECT COUNT(1) FROM Musique WHERE Music_Name = ? AND Compo_Id= ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ) AND Album_Id= ( SELECT Album_Id FROM Album WHERE Album_Name= ? ) AND Genre_Id= ( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? )"
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ), ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 
-connexion = sqlite3.connect("basededonnees.db")
+connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
 curseur = connexion.cursor()
 
 
@@ -342,10 +342,6 @@ class Mainwindow(Tk):
         self.Buttonstat = Button(self.FrameButton, text="Stat",
                                           command=lambda: self.show_frame(Stat))
         self.Buttonstat.pack(side="left", expand="True", fill="x")
-
-
-
-
 
     def show_frame(self, cont):
         frame = self.frames[cont]
