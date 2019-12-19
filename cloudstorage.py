@@ -1,15 +1,21 @@
 """Programatically interact with a Google Cloud Storage bucket."""
 from google.cloud import storage
+from pip._internal import main as pipmain
 from os import environ
-
 import os
-from random import randint
+
+try:
+    from google.cloud import storage
+except ModuleNotFoundError:
+    pipmain(['install', 'google-cloud-storage'])
+
+
 
 bucketName = environ.get('spotif-air')
 bucketFolder = environ.get('Song')
 localFolder = environ.get('file')
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/romar/Downloads/spotif-air-1576781750391-7c9f4663cb4b.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "spotif-air-1576781750391-7c9f4663cb4b.json"
 storage_client = storage.Client()
 bucket = storage_client.get_bucket('spotif-air')
 
