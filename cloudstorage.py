@@ -9,7 +9,7 @@ bucketName = environ.get('spotif-air')
 bucketFolder = environ.get('Song')
 localFolder = environ.get('file')
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/romar/Downloads/spotif-air-1576781750391-7c9f4663cb4b.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "spotif-air-1576781750391-7c9f4663cb4b.json"
 storage_client = storage.Client()
 bucket = storage_client.get_bucket('spotif-air')
 
@@ -45,5 +45,3 @@ def download_random_file(bucketName, bucketFolder, localFolder, name):
     fileName = blob.name.split('/')[-1]
     blob.download_to_filename(localFolder + fileName)
     return f'{fileName} downloaded from bucket.'
-
-
