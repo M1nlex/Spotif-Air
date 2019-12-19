@@ -63,6 +63,14 @@ def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
 def add_playlist():
     pass
 
+def playlist_add_music(name, artist):
+    if [name, artist] not in f.frames[Ajout].List_playlist_creation:
+        f.frames[Ajout].List_playlist_creation.append([name, artist])
+        f.frames[Ajout].List_playlist_creation_number.set(f.frames[Ajout].List_playlist_creation_number.get()+1)
+    else:
+        f.frames[Ajout].List_playlist_creation.remove([name, artist])
+        f.frames[Ajout].List_playlist_creation_number.set(f.frames[Ajout].List_playlist_creation_number.get()-1)
+    print(f.frames[Ajout].List_playlist_creation)
 
 class Playlist(Frame):
 
@@ -119,7 +127,7 @@ class MusicInfo(Frame):
             self.Playbutton = Button(self, text="Jouer", command=lambda:f.player.Launch_music(self.List_for_playlist, self.Nb_in_Playlist))
             self.Playbutton.pack(side=RIGHT, fill=BOTH)
         else:
-            self.Addbutton = Button(self, text="Ajouter", command=lambda:Ajout.playlist_add_music(name=self.Name, artist=self.Artist))
+            self.Addbutton = Button(self, text="Ajouter", command=lambda:playlist_add_music(name=self.Name, artist=self.Artist))
             self.Addbutton.pack(side=RIGHT, fill=BOTH)
 
         self.labelartist = Label(self, text=self.Artist)
@@ -365,8 +373,7 @@ class Start(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         Label(self, text="Bienvenue sur Spotif'Air", anchor='center', font=("TkDefaultFont", 25, "bold")).place(relx=0.5, rely=0.45, anchor=CENTER)
-
-
+        Label(self, text="Cliquez sur un onglet pour démarrer", anchor='center', font=("TkDefaultFont", 15, "bold")).place(relx=0.5, rely=0.55, anchor=CENTER)
 
 
 class Recherche_Music(Frame):
@@ -527,6 +534,7 @@ class Ajout(Frame):
     def __init__(self, parent, controller):
 
         self.List_playlist_creation = []
+        self.List_playlist_creation_number = IntVar()
 
         Frame.__init__(self,parent)
 
@@ -541,10 +549,6 @@ class Ajout(Frame):
 
         self.Button_edit_playlists = Button(self, text="Modifier les playlists")
         self.Button_edit_playlists.pack(side=TOP, fill=BOTH, expand=1)
-
-    def playlist_add_music(self, name, artist):
-        self.List_playlist_creation.append([name, artist])
-        print(self.List_playlist_creation)
 
     def ajout_add_music(self):
         fen_add_music = Toplevel()
@@ -610,6 +614,10 @@ class Ajout(Frame):
         self.fen_add_playlist.EntryGenre = Entry(self.fen_add_playlist, textvariable=self.fen_add_playlist.Genre)
         self.fen_add_playlist.EntryGenre.grid(row=2,column=1)
 
+        Label(self.fen_add_playlist, text="Nombre de musiques :").grid(row=3,column=0)
+        self.fen_add_playlist.Label_Nb = Label(self.fen_add_playlist, textvariable=self.List_playlist_creation_number)
+        self.fen_add_playlist.Label_Nb.grid(row=3,column=1)
+
         self.fen_add_playlist.FrameSearch = Frame(self.fen_add_playlist, bd=5, relief="raise")
 
         self.fen_add_playlist.CanvasSearch = Canvas(self.fen_add_playlist.FrameSearch)
@@ -621,7 +629,7 @@ class Ajout(Frame):
         self.fen_add_playlist.Search_window = self.fen_add_playlist.CanvasSearch.create_window((100,0), window=self.fen_add_playlist.viewport, anchor=NW, tags="self.fen_add_playlist.viewport")
         self.fen_add_playlist.viewport.bind("<Configure>", self.OnFrameConfigure)
 
-        self.fen_add_playlist.FrameSearch.grid(row=3,column=0,columnspan=2)
+        self.fen_add_playlist.FrameSearch.grid(row=4,column=0,columnspan=2)
 
         self.fen_add_playlist.buttonleave = Button(self.fen_add_playlist, text="Fermer", command=self.fen_add_playlist.destroy)
         self.fen_add_playlist.buttonleave.grid(row=7,column=0)
@@ -641,7 +649,7 @@ class Ajout(Frame):
 
 
 class Stat(Frame):
-    
+
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
 
