@@ -1,12 +1,20 @@
+from pip._internal import main as pipmain
 from tkinter import *
 from tkinter import ttk
-import pygame
+
 import threading
 import time
 import sqlite3
 import os
 from tkinter import messagebox
 import cloudstorage
+
+try:
+    import pygame
+
+except ModuleNotFoundError:
+    pipmain(['install', 'pygame'])
+
 
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
 sql_image = "SELECT Image.Image_Link FROM Image,Musique WHERE ( Image.Image_Id = Musique.Image_Id AND Musique.Music_Name = ? )"

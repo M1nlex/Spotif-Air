@@ -9,7 +9,6 @@ import random
 
 try:
     import pygame
-
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
