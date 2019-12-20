@@ -854,7 +854,12 @@ class Stat(Frame):
                 Label(frame, text="\t nb écoute : " + str(i[1])).pack(side='right')
 
     def diagramme(self):
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib.pyplot as plt
+
+        except ModuleNotFoundError:
+            pipmain(['install', 'matplotlib'])
+
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
         recherche = self.Entrysearch.get()
         if recherche == "Genre":
@@ -873,8 +878,9 @@ class Stat(Frame):
             label = []
             size = []
             for i in l:
-                label.append(i[0])
-                size.append(i[1])
+                if i[1] != 0:
+                    label.append(i[0])
+                    size.append(i[1])
         else:
             l = []
             for i in range(1, curseur.execute(sql_get_nb_compo).fetchone()[0]+1):
@@ -890,8 +896,10 @@ class Stat(Frame):
             label = []
             size = []
             for i in l:
-                label.append(i[0])
-                size.append(i[1])
+                if i[1] != 0:
+                    label.append(i[0])
+                    size.append(i[1])
+
 
         fig1, ax1 = plt.subplots(figsize=(4, 3), dpi=100)
         ax1.pie(size, labels=label, autopct='%1.1f%%', shadow=True, startangle=90)
