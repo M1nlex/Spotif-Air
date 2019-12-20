@@ -551,7 +551,7 @@ class Recherche_Music(Frame):
             widget.destroy()
         curseur.execute(sql_search_music, ('%' + self.searchvar.get() + '%', '%' + self.searchvar.get() + '%'))
         search_result = curseur.fetchall()
-        for i in t:
+        for i in search_result:
             MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i] )
 
 class Player(Musique, Frame):
