@@ -213,8 +213,8 @@ class Playlist(Frame):
         self.Number.set(Number)
         self.Genre.set(Genre)
 
-        Frame.__init__(self, Programme, relief=SUNKEN, bd=5)
-        self.pack(fill=BOTH)
+        Frame.__init__(self, Programme, relief='groove', bd=5, bg='black')
+        self.pack(fill=X, side=TOP, expand=1, anchor=NW, pady=10)
 
         self.LabelName = Label(self, textvariable=self.Name)
         self.LabelName.pack(side=LEFT, fill=BOTH, expand=1)
@@ -241,8 +241,8 @@ class MusicInfo(Frame):
         self.List_for_playlist = List_for_playlist
         self.add_option = add_option
 
-        Frame.__init__(self, Programme, bd=2, relief="groove")
-        self.pack(side=TOP, fill=X, expand=1, anchor=NE)
+        Frame.__init__(self, Programme, bd=2, relief="groove", bg="black")
+        self.pack(side=TOP, fill=X, expand=1, anchor=NE, pady=2)
 
         self.labelname = Label(self, text=self.Name)
         self.labelname.pack(side=LEFT, fill=BOTH, expand=1)
@@ -514,8 +514,7 @@ class Recherche_Music(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
 
-        Label(self, text="Recherche", anchor='center', font=("TkDefaultFont", 30, "bold")).pack(side=TOP, fill=X,
-                                                                                                anchor=N)
+        Label(self, text="Recherche", anchor='center', font=('Segoe UI Light', 30, "bold")).pack(side=TOP, fill=X, anchor=N)
         self.searchvar = StringVar()
 
         self.framesearch_entry_button = Frame(self)
@@ -530,7 +529,8 @@ class Recherche_Music(Frame):
         self.FrameSearch = Frame(self, bd=5, relief="raise")
 
         self.CanvasSearch = Canvas(self.FrameSearch)
-        self.viewport = Frame(self.CanvasSearch, width=300)
+        self.viewport = Frame(self.CanvasSearch, width=390)
+        #self.viewport.pack_propagate(False)
         self.Search_scrollbar = Scrollbar(self.FrameSearch, orient='vertical', command=self.CanvasSearch.yview)
         self.CanvasSearch.configure(yscrollcommand=self.Search_scrollbar.set)
         self.Search_scrollbar.pack(side=RIGHT, fill=Y)
@@ -626,16 +626,19 @@ class Recherche_Playlist(Frame):
 
         Frame.__init__(self, parent)
 
+
         self.Playlist_Content = Frame(self)
         self.Playlist_Content.grid(row=0, column=0, sticky="nsew")
 
-        self.Playlist_list = Frame(self)
+        self.Playlist_list = Frame(self, bd=2, bg='red')
         self.Playlist_list.grid(row=0, column=0, sticky="nsew")
 
-        self.Labeltitle = Label(self.Playlist_list, text="Playlists", font=('Helvetica', '20'))
-        self.Labeltitle.pack(fill=X)
+        self.rowconfigure(0, minsize=450)
 
-        self.FramePlaylist = Frame(self.Playlist_list)
+        self.Labeltitle = Label(self.Playlist_list, text="Playlists", font=('Segoe UI Light', '30'))
+        self.Labeltitle.pack(fill=X, side=TOP, expand=1, anchor=N)
+
+        self.FramePlaylist = Frame(self.Playlist_list, relief='groove', bd=5)
 
         self.CanvasPlaylist = Canvas(self.FramePlaylist, height=100, width=400)
         # self.CanvasPlaylist.pack_propagate(0)
@@ -654,7 +657,7 @@ class Recherche_Playlist(Frame):
             Playlist(Programme=self.viewport, Name=i[0], Number=i[1], List=i[2], Genre=i[3],
                      fenetre_de_retour=self.Playlist_list, fenetre_playlist=self.Playlist_Content)
 
-        self.FramePlaylist.pack()
+        self.FramePlaylist.pack(side=TOP, fill=BOTH, expand=1, anchor=CENTER)
 
     def OnFrameConfigure(self, event):
         self.CanvasPlaylist.configure(scrollregion=self.CanvasPlaylist.bbox("all"))

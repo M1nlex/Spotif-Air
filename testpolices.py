@@ -1,5 +1,5 @@
 
 from tkinter import Tk, font
-root = Tk()
-font.families()
-root.mainloop()
+#root = Tk()
+print(font.families())
+#root.mainloop()
