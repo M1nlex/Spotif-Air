@@ -214,7 +214,7 @@ class Playlist(Frame):
         self.Number.set(Number)
         self.Genre.set(Genre)
 
-        Frame.__init__(self, Programme, relief='groove', bd=5, bg='black')
+        Frame.__init__(self, Programme, relief='groove', bd=2, bg='black')
         self.pack(fill=X, side=TOP, expand=1, anchor=NW, pady=10)
 
         self.LabelName = Label(self, textvariable=self.Name)
