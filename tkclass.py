@@ -772,7 +772,7 @@ class Stat(Frame):
 
         self.framesearch_entry_button = Frame(self)
         self.framesearch_entry_button.pack(side=TOP, fill=X, expand=1, anchor=N)
-        Label(self.framesearch_entry_button, text='Top 10 : ').pack(side=LEFT)
+        Label(self.framesearch_entry_button, text='Top : ').pack(side=LEFT)
         self.Entrysearch = ttk.Combobox(self.framesearch_entry_button, values=["Music", "Artiste", "Genre"])
         self.Entrysearch.pack(side=LEFT, fill=X, expand=1)
 
