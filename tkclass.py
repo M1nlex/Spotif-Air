@@ -35,8 +35,10 @@ sql_get_genre = "SELECT Genre_Name from Genre WHERE Genre_Id = ?"
 
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ?, ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 sql_test_playlist_exist = "SELECT COUNT(1) FROM Playlists WHERE PL_Name = ?"
+sql_test_playlist_exist_2 = "SELECT COUNT(1) FROM Playlists WHERE PL_Name = ? AND PL_List = ? AND PL_genre = (SELECT Genre_Id FROM Genre WHERE Genre_Name = ?) AND PL_Nb = ?"
 sql_add_playlist = "INSERT INTO Playlists (PL_Name, PL_List, PL_genre, PL_Nb) VALUES (?, ?, (SELECT Genre_Id FROM Genre WHERE Genre_Name= ?), ?)"
 sql_get_compo_id = "SELECT Genre_Id FROM Genre WHERE Genre_Name= ?"
+sql_edit_playlsit = "UPDATE Playlists SET PL_Name = ?, PL_List = ?, PL_genre = (SELECT Genre_Id FROM Genre WHERE Genre_Name=?), PL_Nb = ? WHERE PL_Name = ?"
 
 def on_closing():
     pygame.mixer_music.stop()
@@ -118,7 +120,21 @@ def playlist_add_music(name, artist):
     else:
         f.frames[Ajout].List_playlist_creation.remove([name, artist])
         f.frames[Ajout].List_playlist_creation_number.set(f.frames[Ajout].List_playlist_creation_number.get()-1)
-    print(f.frames[Ajout].List_playlist_creation)
+
+def confirm_edit(Name, List, Genre, Nb, oldName):
+    String_to_send = ""
+    for i in List:
+        String_to_send = String_to_send + ";" + str(curseur.execute( "SELECT Music_Id FROM Musique WHERE Music_Name= ? AND Compo_Id = (SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ?)", (i[0],i[1]) ).fetchone()[0])
+    if String_to_send[0]==";":
+        String_to_send = String_to_send[1:]
+    if Name=="" or Genre == "":
+        messagebox.showerror("Erreur", "Il manque des informations pour changer la playlist")
+    elif curseur.execute(sql_test_playlist_exist_2, (Name, String_to_send, Genre, Nb) ).fetchone()[0] == 1:
+        messagebox.showwarning("Erreur", "Une playlist du même nom existe déjà dans la base de donnée")
+    else:
+        curseur.execute(sql_edit_playlsit,(Name, String_to_send, Genre, Nb, oldName))
+        messagebox.showinfo("Succès", "La playlist a été modifiée, veuillez\nretourner aux playlists")
+        maj_playlist()
 
 def edit_playlist(Name, List, Genre, Nb):
 
@@ -132,8 +148,13 @@ def edit_playlist(Name, List, Genre, Nb):
 
     edit_win.Name.set(Name)
     edit_win.Genre.set(Genre)
+    edit_win.oldName = Name
 
-    f.frames[Ajout].List_playlist_creation=(List)
+    List_tempo = []
+    for i in List:
+        List_tempo.append( [ i[0],i[1] ] )
+
+    f.frames[Ajout].List_playlist_creation=(List_tempo)
     f.frames[Ajout].List_playlist_creation_number.set(Nb)
 
 
@@ -168,7 +189,7 @@ def edit_playlist(Name, List, Genre, Nb):
     edit_win.buttonleave = Button(edit_win, text="Fermer", command=edit_win.destroy)
     edit_win.buttonleave.grid(row=7,column=0)
 
-    edit_win.buttonadd = Button(edit_win, text="Confirmer", command=lambda:add_playlist(Nom=edit_win.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=edit_win.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get() ))
+    edit_win.buttonadd = Button(edit_win, text="Confirmer", command=lambda:confirm_edit(Name=edit_win.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=edit_win.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get(), oldName=edit_win.oldName))
     edit_win.buttonadd.grid(row=7,column=1)
 
     for widget in edit_win.viewport.winfo_children():
@@ -177,7 +198,6 @@ def edit_playlist(Name, List, Genre, Nb):
     search_result = curseur.fetchall()
     for i in search_result:
         MusicInfo(edit_win.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
-
 
 class Playlist(Frame):
 
@@ -213,7 +233,6 @@ class Playlist(Frame):
         self.LabelNumber = Label(self, textvariable=self.Number)
         self.LabelNumber.pack(side=RIGHT, fill=BOTH, expand=1)
 
-
 class MusicInfo(Frame):
 
     def __init__(self, Programme=None, Name="", Artist="", Nb_in_Playlist=0, List_for_playlist=[[]], add_option=0):
@@ -239,7 +258,6 @@ class MusicInfo(Frame):
 
         self.labelartist = Label(self, text=self.Artist)
         self.labelartist.pack(side=RIGHT, fill=BOTH, expand=1)
-
 
 class Playlist_Content(Frame):
 
@@ -310,7 +328,6 @@ class Playlist_Content(Frame):
 
     def OnFrameConfigure(self, event):
         self.CanvasMusic.configure(scrollregion=self.CanvasMusic.bbox("all"))
-
 
 class Musique():
     def __init__(self, playlist=['Etude Op. 25 No. 11 (Winter Wind)', 'Mii Channel Theme']):
@@ -418,7 +435,6 @@ class Musique():
         volume = int(val) / 100
         pygame.mixer.music.set_volume(volume)
 
-
 class Mainwindow(Tk):
     def __init__(self):
         super().__init__()
@@ -489,13 +505,11 @@ class Mainwindow(Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-
 class Start(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         Label(self, text="Bienvenue sur Spotif'Air", anchor='center', font=("TkDefaultFont", 25, "bold")).place(relx=0.5, rely=0.45, anchor=CENTER)
         Label(self, text="Cliquez sur un onglet pour démarrer", anchor='center', font=("TkDefaultFont", 15, "bold")).place(relx=0.5, rely=0.55, anchor=CENTER)
-
 
 class Recherche_Music(Frame):
 
@@ -541,7 +555,6 @@ class Recherche_Music(Frame):
         search_result = curseur.fetchall()
         for i in t:
             MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i] )
-
 
 class Player(Musique, Frame):
 
@@ -599,7 +612,6 @@ class Player(Musique, Frame):
         f.player.playlist = p
         f.player.play(i=Nb_in_Playlist)
 
-
 class Recherche_Playlist(Frame):
 
     def __init__(self, parent, controller):
@@ -648,7 +660,6 @@ class Recherche_Playlist(Frame):
 
     def OnFrameConfigure(self, event):
         self.CanvasPlaylist.configure(scrollregion=self.CanvasPlaylist.bbox("all"))
-
 
 class Ajout(Frame):
 
@@ -761,7 +772,6 @@ class Ajout(Frame):
 
     def OnFrameConfigure(self, event):
         self.fen_add_playlist.CanvasSearch.configure(scrollregion=self.fen_add_playlist.CanvasSearch.bbox("all"))
-
 
 class Stat(Frame):
 
