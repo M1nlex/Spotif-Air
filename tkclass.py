@@ -24,6 +24,15 @@ sql_playlists_music_part2 = " AND Musique.Compo_Id = Compositeur.Compo_Id"
 sql_add_listen = "UPDATE Musique SET Nb_Listen = Nb_Listen + 1 WHERE Music_Name = ?"
 sql_search_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name FROM Musique,Compositeur WHERE (Musique.Music_Name like ? OR Compositeur.Compo_Name like ? ) AND Musique.Music_Id=Compositeur.Compo_Id"
 sql_test_music_exist = "SELECT COUNT(1) FROM Musique WHERE Music_Name = ? AND Compo_Id= ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ) AND Album_Id= ( SELECT Album_Id FROM Album WHERE Album_Name= ? ) AND Genre_Id= ( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? )"
+sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ( SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ? ), ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
+sql_classement_music = "SELECT Musique.Music_Name, Compositeur.Compo_Name From Musique, Compositeur WHERE Musique.Compo_Id = Compositeur.Compo_Id ORDER BY Nb_Listen DESC"
+sql_get_sum_listen_compo = "SELECT SUM(Nb_Listen) FROM Musique WHERE Compo_Id = ?"
+sql_get_nb_compo = "SELECT MAX(Compo_Id) FROM Compositeur"
+sql_get_comp = "SELECT Compo_Name from Compositeur WHERE Compo_Id = ?"
+sql_get_sum_listen_genre = "SELECT SUM(Nb_Listen) FROM Musique WHERE Genre_Id = ?"
+sql_get_nb_genre = "SELECT MAX(Genre_Id) FROM Genre"
+sql_get_genre = "SELECT Genre_Name from Genre WHERE Genre_Id = ?"
+
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ?, ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 sql_test_playlist_exist = "SELECT COUNT(1) FROM Playlists WHERE PL_Name = ?"
 sql_add_playlist = "INSERT INTO Playlists (PL_Name, PL_List, PL_genre, PL_Nb) VALUES (?, ?, (SELECT Genre_Id FROM Genre WHERE Genre_Name= ?), ?)"
@@ -333,7 +342,7 @@ class Musique():
             f.player.MusicTitle.config(text=self.donnee)
             curseur.execute(sql_music, [self.donnee])
             file = curseur.fetchone()[0]
-            print(file)
+            #print(file)
             try:
                 pygame.mixer.music.load(file)
             except:
@@ -342,7 +351,7 @@ class Musique():
 
             curseur.execute(sql_image, [self.donnee])
             Lien_img = curseur.fetchone()[0]
-            print(Lien_img)
+
             try:
                 music_img = PhotoImage(file=Lien_img)
             except:
@@ -770,9 +779,77 @@ class Stat(Frame):
         self.buttonsearch = Button(self.framesearch_entry_button, text="Recherche", command=self.top10)
         self.buttonsearch.pack(side=RIGHT, fill=X)
 
+        self.FrameSearch = Frame(self, bd=5, relief="raise")
+
+        self.CanvasSearch = Canvas(self.FrameSearch)
+        self.viewport = Frame(self.CanvasSearch, width=300)
+        self.Search_scrollbar = Scrollbar(self.FrameSearch, orient='vertical', command=self.CanvasSearch.yview)
+        self.CanvasSearch.configure(yscrollcommand=self.Search_scrollbar.set)
+        self.Search_scrollbar.pack(side=RIGHT, fill=Y)
+        self.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
+        self.Search_window = self.CanvasSearch.create_window((100, 0), window=self.viewport, anchor=NW,
+                                                             tags="self.viewport")
+        self.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+        self.FrameSearch.pack(side=TOP, fill=BOTH, expand=1, anchor=N)
+
+    def OnFrameConfigure(self, event):
+        self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
+
+
     def top10(self):
+        for widget in self.viewport.winfo_children():
+            widget.destroy()
         recherche = self.Entrysearch.get()
-        print(recherche)
+        if recherche == "Music":
+            curseur.execute(sql_classement_music)
+            l = curseur.fetchall()
+            a = 0
+            for i in l:
+                a = a + 1
+                frame = Frame(self.viewport)
+                frame.pack(side=TOP, fill=X, expand=1, anchor=NE)
+                Label(frame, text="Top " + str(a) + " : ").pack(side='left')
+                MusicInfo(frame, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i])
+
+        if recherche == "Artiste":
+            l = []
+            for i in range(1, curseur.execute(sql_get_nb_compo).fetchone()[0]+1):
+                a = curseur.execute(sql_get_sum_listen_compo, (i,)).fetchone()[0]
+                if a is not None:
+                    l.append([i, a])
+            l.sort(key=lambda x: x[1], reverse=True)
+            a = 0
+            for i in l:
+                a = a + 1
+                comp = (curseur.execute(sql_get_comp, (i[0],)).fetchone()[0])
+                frame = Frame(self.viewport, relief="groove", bd=5)
+                frame.pack(side=TOP, fill=X, expand=1, anchor=NE)
+                Label(frame, text="Top " + str(a) + " : " + comp).pack(side='left', fill=X)
+                Label(frame, text= "\t nb écoute : " + str(i[1])).pack(side='right')
+
+        if recherche == "Genre":
+            l = []
+            for i in range(1, curseur.execute(sql_get_nb_genre).fetchone()[0] + 1):
+                a = curseur.execute(sql_get_sum_listen_genre, (i,)).fetchone()[0]
+                if a is not None:
+                    l.append([i, a])
+            l.sort(key=lambda x: x[1], reverse=True)
+            a = 0
+            for i in l:
+                a = a + 1
+                comp = (curseur.execute(sql_get_genre, (i[0],)).fetchone()[0])
+                frame = Frame(self.viewport, relief="groove", bd=5)
+                frame.pack(side=TOP, fill=X, expand=1, anchor=NE)
+                Label(frame, text="Top " + str(a) + " : " + comp).pack(side='left', fill=X)
+                Label(frame, text="\t nb écoute : " + str(i[1])).pack(side='right')
+
+
+
+
+
+        #curseur.execute(sql_search_music, ('%' + self.searchvar.get() + '%', '%' + self.searchvar.get() + '%'))
+        #search_result = curseur.fetchall()
 
 
 
