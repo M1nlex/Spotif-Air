@@ -34,6 +34,10 @@ sql_get_sum_listen_genre = "SELECT SUM(Nb_Listen) FROM Musique WHERE Genre_Id = 
 sql_get_nb_genre = "SELECT MAX(Genre_Id) FROM Genre"
 sql_get_genre = "SELECT Genre_Name from Genre WHERE Genre_Id = ?"
 
+sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ?, ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
+sql_test_playlist_exist = "SELECT COUNT(1) FROM Playlists WHERE PL_Name = ?"
+sql_add_playlist = "INSERT INTO Playlists (PL_Name, PL_List, PL_genre, PL_Nb) VALUES (?, ?, (SELECT Genre_Id FROM Genre WHERE Genre_Name= ?), ?)"
+sql_get_compo_id = "SELECT Genre_Id FROM Genre WHERE Genre_Name= ?"
 
 def on_closing():
     pygame.mixer_music.stop()
@@ -72,7 +76,43 @@ def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
         connexion.commit()
         messagebox.showinfo("Succès", "la musique a bien été ajoutée à la base de donnée.")
 
-def add_playlist():
+def add_playlist(Nom, List, Genre, Nb):
+
+    if Nom=="" or Genre=="":
+        messagebox.showerror("Erreur", "Des informations manquent pour créer la playlist")
+    elif curseur.execute(sql_test_playlist_exist, (Nom,)).fetchone()[0] == 1:
+        messagebox.showwarning("Erreur", "Une playlist du même nom existe déjà dans la base de donnée")
+    elif curseur.execute("SELECT COUNT(1) FROM Genre WHERE Genre_Name=?", (Genre,)).fetchone()[0] == 0:
+        curseur.execute("INSERT INTO Genre(Genre_Name) VALUES (?)", (Genre,))
+    else:
+        String_to_send = ""
+        for i in List:
+            String_to_send = String_to_send + ";" + str(curseur.execute( "SELECT Music_Id FROM Musique WHERE Music_Name= ? AND Compo_Id = (SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ?)", (i[0],i[1]) ).fetchone()[0])
+        if String_to_send[0]==";":
+            String_to_send = String_to_send[1:]
+        curseur.execute(sql_add_playlist, (Nom, String_to_send, Genre, Nb))
+        connexion.commit()
+        f.frames[Ajout].List_playlist_creation = []
+        f.frames[Ajout].List_playlist_creation_number.set(0)
+        messagebox.showinfo("Succès","La playlist a été créée")
+        maj_playlist()
+
+def maj_playlist():
+    curseur.execute(sql_playlists)
+    result_d = curseur.fetchall()
+    result_f = []
+    for i in result_d:
+        result_f.append([i[0], i[1], i[2].split(";"), i[3]])
+    for i in result_f:
+        curseur.execute(sql_playlists_music_part1 + "(" + ",".join(i[2]) + ")" + sql_playlists_music_part2)
+        res2 = curseur.fetchall()
+        i[2] = res2
+    for widget in f.frames[Recherche_Playlist].viewport.winfo_children():
+        widget.destroy()
+    for i in result_f:
+        Playlist(Programme=f.frames[Recherche_Playlist].viewport, Name=i[0], Number=i[1], List=i[2], Genre=i[3], fenetre_de_retour=f.frames[Recherche_Playlist].Playlist_list, fenetre_playlist=f.frames[Recherche_Playlist].Playlist_Content)
+
+def maj_music():
     pass
 
 def playlist_add_music(name, artist):
@@ -439,8 +479,8 @@ class Recherche_Music(Frame):
             widget.destroy()
         curseur.execute(sql_search_music, ('%' + self.searchvar.get() + '%', '%' + self.searchvar.get() + '%'))
         search_result = curseur.fetchall()
-        for i in search_result:
-            MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i])
+        for i in t:
+            MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i] )
 
 
 class Player(Musique, Frame):
@@ -655,7 +695,7 @@ class Ajout(Frame):
         self.fen_add_playlist.buttonleave = Button(self.fen_add_playlist, text="Fermer", command=self.fen_add_playlist.destroy)
         self.fen_add_playlist.buttonleave.grid(row=7,column=0)
 
-        self.fen_add_playlist.buttonadd = Button(self.fen_add_playlist, text="Ajouter", command=lambda:add_playlist())
+        self.fen_add_playlist.buttonadd = Button(self.fen_add_playlist, text="Ajouter", command=lambda:add_playlist(Nom=self.fen_add_playlist.Name.get(), List=self.List_playlist_creation, Genre=self.fen_add_playlist.Genre.get(), Nb=self.List_playlist_creation_number.get() ))
         self.fen_add_playlist.buttonadd.grid(row=7,column=1)
 
         for widget in self.fen_add_playlist.viewport.winfo_children():
@@ -769,4 +809,5 @@ if __name__ == '__main__':
     f = Mainwindow()
     f.title("Spotif'Air")
     f.mainloop()
+    connexion.commit()
     on_closing()
