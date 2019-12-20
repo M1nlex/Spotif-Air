@@ -301,12 +301,14 @@ class Playlist_Content(Frame):
         self.ButtonEdit = Button(self, text="Editer la\nplaylist", font=('Helvetica', '8'), command=lambda:edit_playlist(Name=self.Name.get(), List=self.List, Genre=self.Genre.get(), Nb=self.Number.get()))
         self.ButtonEdit.grid(row=2,column=0,sticky="new")
 
-        self.Musiclist = Frame(self)
+        self.Musiclist = Frame(self, relief='groove', bd=5)
         self.Musiclist.grid(row=2, column=1, columnspan=4)
+        self.rowconfigure(2, minsize=400)
+
 
         self.FrameMusic = Frame(self.Musiclist)
 
-        self.CanvasMusic = Canvas(self.FrameMusic, height=100, width=300)
+        self.CanvasMusic = Canvas(self.FrameMusic, height=350, width=300)
         self.viewport = Frame(self.CanvasMusic, width=300)
         self.music_scrollbar = Scrollbar(self.FrameMusic, orient='vertical', command=self.CanvasMusic.yview)
         self.CanvasMusic.configure(yscrollcommand=self.music_scrollbar.set)
@@ -631,7 +633,7 @@ class Recherche_Playlist(Frame):
         self.Playlist_Content = Frame(self)
         self.Playlist_Content.grid(row=0, column=0, sticky="nsew")
 
-        self.Playlist_list = Frame(self, bd=2, bg='red')
+        self.Playlist_list = Frame(self)
         self.Playlist_list.grid(row=0, column=0, sticky="nsew")
 
         self.rowconfigure(0, minsize=450)
