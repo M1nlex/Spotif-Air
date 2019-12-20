@@ -243,7 +243,7 @@ class MusicInfo(Frame):
         self.add_option = add_option
 
         Frame.__init__(self, Programme, bd=2, relief="groove", bg="black")
-        self.pack(side=TOP, fill=X, expand=1, anchor=NE, pady=2)
+        self.pack(side=TOP, fill=X, expand=1, anchor=NE, pady=10)
 
         self.labelname = Label(self, text=self.Name)
         self.labelname.pack(side=LEFT, fill=BOTH, expand=1)
@@ -278,10 +278,10 @@ class Playlist_Content(Frame):
 
         self.leavebutton = Button(self, text="Retour aux\nPlaylists",
                                   command=lambda: return_to_playlist(self, self.fenetre_de_retour),
-                                  font=('Helvetica', '10'))
+                                  font=('Helvetica', '8'))
         self.leavebutton.grid(row=0, column=0, rowspan=2, sticky="ns")
 
-        self.labelname = Label(self, textvariable=self.Name, font=('Helvetica', '15'), width=10)
+        self.labelname = Label(self, textvariable=self.Name, font=('Helvetica', '15'), width=5)
         self.labelname.grid(row=0, column=1, rowspan=2, sticky="nsew")
         self.rowconfigure(0,weight=1)
         self.columnconfigure(1,weight=1)
@@ -298,15 +298,17 @@ class Playlist_Content(Frame):
         self.LabelGenre = Label(self, textvariable=self.Genre, font=('Helvetica', '8'))
         self.LabelGenre.grid(row=1, column=4)
 
-        self.ButtonEdit = Button(self, text="Editer la\nplaylist", font=('Helvetica', '10'), command=lambda:edit_playlist(Name=self.Name.get(), List=self.List, Genre=self.Genre.get(), Nb=self.Number.get()))
+        self.ButtonEdit = Button(self, text="Editer la\nplaylist", font=('Helvetica', '8'), command=lambda:edit_playlist(Name=self.Name.get(), List=self.List, Genre=self.Genre.get(), Nb=self.Number.get()))
         self.ButtonEdit.grid(row=2,column=0,sticky="new")
 
-        self.Musiclist = Frame(self)
+        self.Musiclist = Frame(self, relief='groove', bd=5)
         self.Musiclist.grid(row=2, column=1, columnspan=4)
+        self.rowconfigure(2, minsize=400)
+
 
         self.FrameMusic = Frame(self.Musiclist)
 
-        self.CanvasMusic = Canvas(self.FrameMusic, height=100, width=400)
+        self.CanvasMusic = Canvas(self.FrameMusic, height=350, width=300)
         self.viewport = Frame(self.CanvasMusic, width=300)
         self.music_scrollbar = Scrollbar(self.FrameMusic, orient='vertical', command=self.CanvasMusic.yview)
         self.CanvasMusic.configure(yscrollcommand=self.music_scrollbar.set)
@@ -631,7 +633,7 @@ class Recherche_Playlist(Frame):
         self.Playlist_Content = Frame(self)
         self.Playlist_Content.grid(row=0, column=0, sticky="nsew")
 
-        self.Playlist_list = Frame(self, bd=2, bg='red')
+        self.Playlist_list = Frame(self)
         self.Playlist_list.grid(row=0, column=0, sticky="nsew")
 
         self.rowconfigure(0, minsize=450)
