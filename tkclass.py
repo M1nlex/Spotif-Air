@@ -440,7 +440,7 @@ class Mainwindow(Tk):
 
         mainframe = Frame()
         mainframe.pack(side="top", fill="both", expand=True)
-
+        self.resizable(False, False)
         mainframe.grid_rowconfigure(0, weight=1)
         mainframe.grid_columnconfigure(0, weight=1)
         self.frames = {}
@@ -923,7 +923,6 @@ if __name__ == '__main__':
     connexion = sqlite3.connect("basededonnees.db", check_same_thread=False)
     curseur = connexion.cursor()
     f = Mainwindow()
-    f.resizable(False, False)
     f.title("Spotif'Air")
     f.mainloop()
     connexion.commit()
