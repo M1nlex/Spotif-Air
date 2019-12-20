@@ -891,7 +891,7 @@ class Stat(Frame):
                 if i[1] != 0:
                     label.append(i[0])
                     size.append(i[1])
-        else:
+        if recherche == "Artiste":
             l = []
             for i in range(1, curseur.execute(sql_get_nb_compo).fetchone()[0]+1):
                 a = curseur.execute(sql_get_sum_listen_compo, (i,)).fetchone()[0]
@@ -909,14 +909,14 @@ class Stat(Frame):
                 if i[1] != 0:
                     label.append(i[0])
                     size.append(i[1])
+        if recherche == "Genre" or recherche == "Artiste":
 
-
-        fig1, ax1 = plt.subplots(figsize=(4, 3), dpi=100)
-        ax1.pie(size, labels=label, autopct='%1.1f%%', shadow=True, startangle=90)
-        ax1.axis('equal')
-        canvas = FigureCanvasTkAgg(fig1, master=self.viewport)
-        plot_widget = canvas.get_tk_widget()
-        plot_widget.grid(row=0, column=0)
+            fig1, ax1 = plt.subplots(figsize=(4, 3), dpi=100)
+            ax1.pie(size, labels=label, autopct='%1.1f%%', shadow=True, startangle=90)
+            ax1.axis('equal')
+            canvas = FigureCanvasTkAgg(fig1, master=self.viewport)
+            plot_widget = canvas.get_tk_widget()
+            plot_widget.grid(row=0, column=0)
 
 # ---------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------
