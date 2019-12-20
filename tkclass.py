@@ -15,7 +15,6 @@ try:
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
-
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
 sql_image = "SELECT Image.Image_Link FROM Image,Musique WHERE ( Image.Image_Id = Musique.Image_Id AND Musique.Music_Name = ? )"
 sql_list_music = "SELECT Music_Name FROM Musique"
@@ -36,7 +35,6 @@ def on_closing():
     print('end')
     os._exit(0)
 
-
 def show_playlist(self, Programme, Name, Number, List, Genre, fenetre_de_retour, fenetre_playlist):
     if (Name == "Erreur" and Number == 0):
         return
@@ -44,11 +42,9 @@ def show_playlist(self, Programme, Name, Number, List, Genre, fenetre_de_retour,
                      fenetre_de_retour=fenetre_de_retour)
     fenetre_playlist.tkraise()
 
-
 def return_to_playlist(self, fenetre_de_retour):
     fenetre_de_retour.tkraise()
     self.destroy()
-
 
 def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
     if Nom == "" or Lien == "" or Compositeur == "" or Genre == "" or not (".ogg" in Lien):
@@ -114,6 +110,65 @@ def playlist_add_music(name, artist):
         f.frames[Ajout].List_playlist_creation.remove([name, artist])
         f.frames[Ajout].List_playlist_creation_number.set(f.frames[Ajout].List_playlist_creation_number.get()-1)
     print(f.frames[Ajout].List_playlist_creation)
+
+def edit_playlist(Name, List, Genre, Nb):
+
+    def OnFrameConfigure(self):
+        self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
+
+    edit_win = Toplevel()
+
+    edit_win.Name = StringVar()
+    edit_win.Genre = StringVar()
+
+    edit_win.Name.set(Name)
+    edit_win.Genre.set(Genre)
+
+    f.frames[Ajout].List_playlist_creation=(List)
+    f.frames[Ajout].List_playlist_creation_number.set(Nb)
+
+
+
+    Label(edit_win, text="Editer une playlist", font=('Helvetica', '20')).grid(row=0, column=0, columnspan=2)
+
+    Label(edit_win, text="Nom :").grid(row=1,column=0)
+    edit_win.EntryName = Entry(edit_win, textvariable=edit_win.Name)
+    edit_win.EntryName.grid(row=1,column=1)
+
+    Label(edit_win, text="Genre :").grid(row=2,column=0)
+    edit_win.EntryGenre = Entry(edit_win, textvariable=edit_win.Genre)
+    edit_win.EntryGenre.grid(row=2,column=1)
+
+    Label(edit_win, text="Nombre de musiques :").grid(row=3,column=0)
+    edit_win.Label_Nb = Label(edit_win, textvariable=f.frames[Ajout].List_playlist_creation_number)
+    edit_win.Label_Nb.grid(row=3,column=1)
+
+    edit_win.FrameSearch = Frame(edit_win, bd=5, relief="raise")
+
+    edit_win.CanvasSearch = Canvas(edit_win.FrameSearch)
+    edit_win.viewport = Frame(edit_win.CanvasSearch, width=300)
+    edit_win.Search_scrollbar = Scrollbar(edit_win.FrameSearch, orient='vertical', command=edit_win.CanvasSearch.yview)
+    edit_win.CanvasSearch.configure(yscrollcommand=edit_win.Search_scrollbar.set)
+    edit_win.Search_scrollbar.pack(side=RIGHT, fill=Y)
+    edit_win.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
+    edit_win.Search_window = edit_win.CanvasSearch.create_window((100,0), window=edit_win.viewport, anchor=NW, tags="edit_win.viewport")
+    edit_win.viewport.bind("<Configure>", OnFrameConfigure(edit_win))
+
+    edit_win.FrameSearch.grid(row=4,column=0,columnspan=2)
+
+    edit_win.buttonleave = Button(edit_win, text="Fermer", command=edit_win.destroy)
+    edit_win.buttonleave.grid(row=7,column=0)
+
+    edit_win.buttonadd = Button(edit_win, text="Confirmer", command=lambda:add_playlist(Nom=edit_win.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=edit_win.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get() ))
+    edit_win.buttonadd.grid(row=7,column=1)
+
+    for widget in edit_win.viewport.winfo_children():
+        widget.destroy()
+    curseur.execute(sql_search_music, ('%', '%'))
+    search_result = curseur.fetchall()
+    for i in search_result:
+        MusicInfo(edit_win.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
+
 
 class Playlist(Frame):
 
@@ -202,6 +257,8 @@ class Playlist_Content(Frame):
 
         self.labelname = Label(self, textvariable=self.Name, font=('Helvetica', '15'), width=10)
         self.labelname.grid(row=0, column=1, rowspan=2, sticky="nsew")
+        self.rowconfigure(0,weight=1)
+        self.columnconfigure(1,weight=1)
 
         self.Labelfornumber = Label(self, text="Nombre de musiques :", font=('Helvetica', '8'))
         self.Labelfornumber.grid(row=0, column=3)
@@ -215,8 +272,11 @@ class Playlist_Content(Frame):
         self.LabelGenre = Label(self, textvariable=self.Genre, font=('Helvetica', '8'))
         self.LabelGenre.grid(row=1, column=4)
 
+        self.ButtonEdit = Button(self, text="Editer la\nplaylist", font=('Helvetica', '10'), command=lambda:edit_playlist(Name=self.Name.get(), List=self.List, Genre=self.Genre.get(), Nb=self.Number.get()))
+        self.ButtonEdit.grid(row=2,column=0,sticky="new")
+
         self.Musiclist = Frame(self)
-        self.Musiclist.grid(row=2, column=0, columnspan=5, sticky="nsew")
+        self.Musiclist.grid(row=2, column=1, columnspan=4)
 
         self.FrameMusic = Frame(self.Musiclist)
 
@@ -590,17 +650,11 @@ class Ajout(Frame):
 
         Frame.__init__(self,parent)
 
-        self.Button_add_music = Button(self, text="Ajouter une musique", command=self.ajout_add_music)
+        self.Button_add_music = Button(self, text="Ajouter une musique", font=('Helvetica', '20'), bd=10, command=self.ajout_add_music)
         self.Button_add_music.pack(side=TOP, fill=BOTH, expand=1)
 
-        self.Button_add_playlist = Button(self, text="Ajouter une playlist", command=self.ajout_add_playlist)
+        self.Button_add_playlist = Button(self, text="Ajouter une playlist", font=('Helvetica', '20'), bd=10, command=self.ajout_add_playlist)
         self.Button_add_playlist.pack(side=TOP, fill=BOTH, expand=1)
-
-        self.Button_edit_musics = Button(self, text="Modifier les musiques")
-        self.Button_edit_musics.pack(side=TOP, fill=BOTH, expand=1)
-
-        self.Button_edit_playlists = Button(self, text="Modifier les playlists")
-        self.Button_edit_playlists.pack(side=TOP, fill=BOTH, expand=1)
 
     def ajout_add_music(self):
         fen_add_music = Toplevel()
