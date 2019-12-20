@@ -282,7 +282,7 @@ class Musique():
             f.player.MusicTitle.config(text=self.donnee)
             curseur.execute(sql_music, [self.donnee])
             file = curseur.fetchone()[0]
-            print(file)
+            #print(file)
             try:
                 pygame.mixer.music.load(file)
             except:
@@ -291,7 +291,7 @@ class Musique():
 
             curseur.execute(sql_image, [self.donnee])
             Lien_img = curseur.fetchone()[0]
-            print(Lien_img)
+
             try:
                 music_img = PhotoImage(file=Lien_img)
             except:
@@ -757,7 +757,7 @@ class Stat(Frame):
                 frame.pack(side=TOP, fill=X, expand=1, anchor=NE)
                 Label(frame, text="Top " + str(a) + " : ").pack(side='left')
                 MusicInfo(frame, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i])
-            print(l)
+
         if recherche == "Artiste":
             l = []
             for i in range(1, curseur.execute(sql_get_nb_compo).fetchone()[0]+1):
