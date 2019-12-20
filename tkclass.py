@@ -637,7 +637,7 @@ class Recherche_Playlist(Frame):
         self.rowconfigure(0, minsize=450)
 
         self.Labeltitle = Label(self.Playlist_list, text="Playlists", font=('Segoe UI Light', '30'))
-        self.Labeltitle.pack(fill=X, side=TOP, expand=1, anchor=N)
+        self.Labeltitle.pack(fill=X, side=TOP,anchor=N)
 
         self.FramePlaylist = Frame(self.Playlist_list, relief='groove', bd=5)
 
