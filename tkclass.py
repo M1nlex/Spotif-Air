@@ -777,6 +777,8 @@ class Stat(Frame):
         self.Entrysearch.pack(side=LEFT, fill=X, expand=1)
 
         self.buttonsearch = Button(self.framesearch_entry_button, text="Recherche", command=self.top10)
+        self.buttonsearch.pack(side=LEFT, fill=X)
+        self.buttonsearch = Button(self.framesearch_entry_button, text="Diagramme", command=self.diagramme)
         self.buttonsearch.pack(side=RIGHT, fill=X)
 
         self.FrameSearch = Frame(self, bd=5, relief="raise")
@@ -795,7 +797,6 @@ class Stat(Frame):
 
     def OnFrameConfigure(self, event):
         self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
-
 
     def top10(self):
         for widget in self.viewport.winfo_children():
@@ -843,6 +844,56 @@ class Stat(Frame):
                 frame.pack(side=TOP, fill=X, expand=1, anchor=NE)
                 Label(frame, text="Top " + str(a) + " : " + comp).pack(side='left', fill=X)
                 Label(frame, text="\t nb écoute : " + str(i[1])).pack(side='right')
+
+    def diagramme(self):
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+        recherche = self.Entrysearch.get()
+        if recherche == "Genre":
+            l = []
+            for i in range(1, curseur.execute(sql_get_nb_genre).fetchone()[0] + 1):
+                a = curseur.execute(sql_get_sum_listen_genre, (i,)).fetchone()[0]
+                if a is not None:
+                    l.append([i, a])
+            l.sort(key=lambda x: x[1], reverse=True)
+            a = 0
+            for i in l:
+                a = a + 1
+                comp = (curseur.execute(sql_get_genre, (i[0],)).fetchone()[0])
+
+                i[0] = comp
+            label = []
+            size = []
+            for i in l:
+                label.append(i[0])
+                size.append(i[1])
+        else:
+            l = []
+            for i in range(1, curseur.execute(sql_get_nb_compo).fetchone()[0]+1):
+                a = curseur.execute(sql_get_sum_listen_compo, (i,)).fetchone()[0]
+                if a is not None:
+                    l.append([i, a])
+            l.sort(key=lambda x: x[1], reverse=True)
+            a = 0
+            for i in l:
+                a = a + 1
+                comp = (curseur.execute(sql_get_comp, (i[0],)).fetchone()[0])
+                i[0] = comp
+            label = []
+            size = []
+            for i in l:
+                label.append(i[0])
+                size.append(i[1])
+
+        fig1, ax1 = plt.subplots(figsize=(4, 3), dpi=100)
+        ax1.pie(size, labels=label, autopct='%1.1f%%', shadow=True, startangle=90)
+        ax1.axis('equal')
+        canvas = FigureCanvasTkAgg(fig1, master=self.viewport)
+        plot_widget = canvas.get_tk_widget()
+        plot_widget.grid(row=0, column=0)
+
+
+
 
 
 
