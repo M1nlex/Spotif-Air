@@ -862,6 +862,9 @@ class Stat(Frame):
         except ModuleNotFoundError:
             pipmain(['install', 'matplotlib'])
 
+        for widget in self.viewport.winfo_children():
+            widget.destroy()
+
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
         recherche = self.Entrysearch.get()
         if recherche == "Genre":
