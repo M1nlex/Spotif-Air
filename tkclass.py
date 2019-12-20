@@ -11,7 +11,6 @@ import cloudstorage
 
 try:
     import pygame
-
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
 
@@ -32,7 +31,6 @@ sql_get_comp = "SELECT Compo_Name from Compositeur WHERE Compo_Id = ?"
 sql_get_sum_listen_genre = "SELECT SUM(Nb_Listen) FROM Musique WHERE Genre_Id = ?"
 sql_get_nb_genre = "SELECT MAX(Genre_Id) FROM Genre"
 sql_get_genre = "SELECT Genre_Name from Genre WHERE Genre_Id = ?"
-
 sql_add_music = "INSERT INTO Musique( Music_Name, Music_Link, Nb_Listen, Compo_Id, Album_Id, Image_Id, Genre_Id ) VALUES (?, ?, 0, ?, ( SELECT Album_Id FROM Album WHERE Album_Name= ? ), ( SELECT Image_Id FROM Image WHERE Image_Name= ? ),( SELECT Genre_Id FROM Genre WHERE Genre_Name= ? ) )"
 sql_test_playlist_exist = "SELECT COUNT(1) FROM Playlists WHERE PL_Name = ?"
 sql_test_playlist_exist_2 = "SELECT COUNT(1) FROM Playlists WHERE PL_Name = ? AND PL_List = ? AND PL_genre = (SELECT Genre_Id FROM Genre WHERE Genre_Name = ?) AND PL_Nb = ?"
@@ -901,19 +899,6 @@ class Stat(Frame):
         canvas = FigureCanvasTkAgg(fig1, master=self.viewport)
         plot_widget = canvas.get_tk_widget()
         plot_widget.grid(row=0, column=0)
-
-
-
-
-
-
-
-
-        #curseur.execute(sql_search_music, ('%' + self.searchvar.get() + '%', '%' + self.searchvar.get() + '%'))
-        #search_result = curseur.fetchall()
-
-
-
 
 # ---------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------
