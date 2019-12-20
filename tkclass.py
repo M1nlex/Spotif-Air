@@ -13,6 +13,7 @@ try:
     import pygame
 except ModuleNotFoundError:
     pipmain(['install', 'pygame'])
+    import pygame
 
 sql_music = "SELECT Music_Link FROM Musique WHERE Music_Name = ?"
 sql_image = "SELECT Image.Image_Link FROM Image,Musique WHERE ( Image.Image_Id = Musique.Image_Id AND Musique.Music_Name = ? )"
@@ -862,11 +863,12 @@ class Stat(Frame):
 
         except ModuleNotFoundError:
             pipmain(['install', 'matplotlib'])
+            import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
         for widget in self.viewport.winfo_children():
             widget.destroy()
 
-        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
         recherche = self.Entrysearch.get()
         if recherche == "Genre":
             l = []

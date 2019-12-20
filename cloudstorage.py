@@ -8,6 +8,7 @@ try:
     from google.cloud import storage
 except ModuleNotFoundError:
     pipmain(['install', 'google-cloud-storage'])
+    from google.cloud import storage
 
 
 
