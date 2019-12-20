@@ -158,7 +158,7 @@ def edit_playlist(Name, List, Genre, Nb):
 
 
 
-    Label(edit_win, text="Editer une playlist", font=('Helvetica', '20')).grid(row=0, column=0, columnspan=2)
+    Label(edit_win, text="Editer une playlist", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
 
     Label(edit_win, text="Nom :").grid(row=1,column=0)
     edit_win.EntryName = Entry(edit_win, textvariable=edit_win.Name)
@@ -278,27 +278,27 @@ class Playlist_Content(Frame):
 
         self.leavebutton = Button(self, text="Retour aux\nPlaylists",
                                   command=lambda: return_to_playlist(self, self.fenetre_de_retour),
-                                  font=('Helvetica', '8'))
+                                  font=('TkDefaultFont', '8'))
         self.leavebutton.grid(row=0, column=0, rowspan=2, sticky="ns")
 
-        self.labelname = Label(self, textvariable=self.Name, font=('Helvetica', '15'), width=5)
+        self.labelname = Label(self, textvariable=self.Name, font=('Segoe UI Light', '18'), width=5)
         self.labelname.grid(row=0, column=1, rowspan=2, sticky="nsew")
         self.rowconfigure(0,weight=1)
         self.columnconfigure(1,weight=1)
 
-        self.Labelfornumber = Label(self, text="Nombre de musiques :", font=('Helvetica', '8'))
+        self.Labelfornumber = Label(self, text="Nombre de musiques :", font=('TkDefaultFont', '8'))
         self.Labelfornumber.grid(row=0, column=3)
 
-        self.LabelNumber = Label(self, textvariable=self.Number, font=('Helvetica', '8'))
+        self.LabelNumber = Label(self, textvariable=self.Number, font=('TkDefaultFont', '8'))
         self.LabelNumber.grid(row=0, column=4)
 
-        self.Labelforgenre = Label(self, text="Genre :", font=('Helvetica', '8'))
+        self.Labelforgenre = Label(self, text="Genre :", font=('TkDefaultFont', '8'))
         self.Labelforgenre.grid(row=1, column=3)
 
-        self.LabelGenre = Label(self, textvariable=self.Genre, font=('Helvetica', '8'))
+        self.LabelGenre = Label(self, textvariable=self.Genre, font=('TkDefaultFont', '8'))
         self.LabelGenre.grid(row=1, column=4)
 
-        self.ButtonEdit = Button(self, text="Editer la\nplaylist", font=('Helvetica', '8'), command=lambda:edit_playlist(Name=self.Name.get(), List=self.List, Genre=self.Genre.get(), Nb=self.Number.get()))
+        self.ButtonEdit = Button(self, text="Editer la\nplaylist", font=('TkDefaultFont', '8'), command=lambda:edit_playlist(Name=self.Name.get(), List=self.List, Genre=self.Genre.get(), Nb=self.Number.get()))
         self.ButtonEdit.grid(row=2,column=0,sticky="new")
 
         self.Musiclist = Frame(self, relief='groove', bd=5)
@@ -509,15 +509,15 @@ class Mainwindow(Tk):
 class Start(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        Label(self, text="Bienvenue sur Spotif'Air", anchor='center', font=("TkDefaultFont", 25, "bold")).place(relx=0.5, rely=0.45, anchor=CENTER)
-        Label(self, text="Cliquez sur un onglet pour démarrer", anchor='center', font=("TkDefaultFont", 15, "bold")).place(relx=0.5, rely=0.55, anchor=CENTER)
+        Label(self, text="Bienvenue sur Spotif'Air", anchor='center', font=('Segoe UI Light', 30, "bold")).place(relx=0.5, rely=0.4, anchor=CENTER)
+        Label(self, text="Cliquez sur un onglet pour démarrer", anchor='center', font=('Segoe UI Light', 15)).place(relx=0.5, rely=0.55, anchor=CENTER)
 
 class Recherche_Music(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
 
-        Label(self, text="Recherche", anchor='center', font=('Segoe UI Light', 30, "bold")).pack(side=TOP, fill=X, anchor=N)
+        Label(self, text="Recherche", anchor='center', font=('Segoe UI Light', 30)).pack(side=TOP, fill=X, anchor=N)
         self.searchvar = StringVar()
 
         self.framesearch_entry_button = Frame(self)
@@ -674,10 +674,10 @@ class Ajout(Frame):
 
         Frame.__init__(self,parent)
 
-        self.Button_add_music = Button(self, text="Ajouter une musique", font=('Helvetica', '20'), bd=10, command=self.ajout_add_music)
+        self.Button_add_music = Button(self, text="Ajouter une musique", font=('Segoe UI Light', 30), bd=10, command=self.ajout_add_music)
         self.Button_add_music.pack(side=TOP, fill=BOTH, expand=1)
 
-        self.Button_add_playlist = Button(self, text="Ajouter une playlist", font=('Helvetica', '20'), bd=10, command=self.ajout_add_playlist)
+        self.Button_add_playlist = Button(self, text="Ajouter une playlist", font=('Segoe UI Light', 30), bd=10, command=self.ajout_add_playlist)
         self.Button_add_playlist.pack(side=TOP, fill=BOTH, expand=1)
 
     def ajout_add_music(self):
@@ -690,7 +690,7 @@ class Ajout(Frame):
         fen_add_music.Image = StringVar()
         fen_add_music.Genre = StringVar()
 
-        Label(fen_add_music, text="Ajouter une musique", font=('Helvetica', '20')).grid(row=0, column=0, columnspan=2)
+        Label(fen_add_music, text="Ajouter une musique", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
 
         Label(fen_add_music, text="Nom :").grid(row=1, column=0)
         fen_add_music.EntryName = Entry(fen_add_music, textvariable=fen_add_music.Name)
@@ -734,7 +734,7 @@ class Ajout(Frame):
         self.fen_add_playlist.List = []
         self.fen_add_playlist.Genre = StringVar()
 
-        Label(self.fen_add_playlist, text="Ajouter une playlist", font=('Helvetica', '20')).grid(row=0, column=0, columnspan=2)
+        Label(self.fen_add_playlist, text="Ajouter une playlist", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
 
         Label(self.fen_add_playlist, text="Nom :").grid(row=1,column=0)
         self.fen_add_playlist.EntryName = Entry(self.fen_add_playlist, textvariable=self.fen_add_playlist.Name)
@@ -782,7 +782,7 @@ class Stat(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="blue")
 
-        Label(self, text="Statistique", anchor='center', font=("TkDefaultFont", 30, "bold")).pack(side=TOP, fill=X, anchor=N)
+        Label(self, text="Statistique", anchor='center', font=('Segoe UI Light', 30)).pack(side=TOP, fill=X, anchor=N)
 
         self.framesearch_entry_button = Frame(self)
         self.framesearch_entry_button.pack(side=TOP, fill=X, expand=1, anchor=N)
