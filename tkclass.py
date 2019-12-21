@@ -120,7 +120,7 @@ def playlist_add_music(name, artist):
         f.frames[Ajout].List_playlist_creation.remove([name, artist])
         f.frames[Ajout].List_playlist_creation_number.set(f.frames[Ajout].List_playlist_creation_number.get()-1)
 
-def confirm_edit(Name, List, Genre, Nb, oldName):
+def confirm_edit(fen, Name, List, Genre, Nb, oldName):
     String_to_send = ""
     for i in List:
         String_to_send = String_to_send + ";" + str(curseur.execute( "SELECT Music_Id FROM Musique WHERE Music_Name= ? AND Compo_Id = (SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ?)", (i[0],i[1]) ).fetchone()[0])
@@ -134,69 +134,73 @@ def confirm_edit(Name, List, Genre, Nb, oldName):
         curseur.execute(sql_edit_playlsit,(Name, String_to_send, Genre, Nb, oldName))
         messagebox.showinfo("Succès", "La playlist a été modifiée, veuillez\nretourner aux playlists")
         maj_playlist()
+        fen.destroy()
 
-def edit_playlist(Name, List, Genre, Nb):
 
-    def OnFrameConfigure(self):
+class edit_playlist(Toplevel):
+
+    def __init__(self, Name, List, Genre, Nb):
+
+        Toplevel.__init__(self)
+
+        self.Name = StringVar()
+        self.Genre = StringVar()
+
+        self.Name.set(Name)
+        self.Genre.set(Genre)
+        self.oldName = Name
+
+        List_tempo = []
+        for i in List:
+            List_tempo.append( [ i[0],i[1] ] )
+
+        f.frames[Ajout].List_playlist_creation=(List_tempo)
+        f.frames[Ajout].List_playlist_creation_number.set(Nb)
+
+
+
+        Label(self, text="Editer une playlist", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
+
+        Label(self, text="Nom :").grid(row=1,column=0)
+        self.EntryName = Entry(self, textvariable=self.Name)
+        self.EntryName.grid(row=1,column=1)
+
+        Label(self, text="Genre :").grid(row=2,column=0)
+        self.EntryGenre = Entry(self, textvariable=self.Genre)
+        self.EntryGenre.grid(row=2,column=1)
+
+        Label(self, text="Nombre de musiques :").grid(row=3,column=0)
+        self.Label_Nb = Label(self, textvariable=f.frames[Ajout].List_playlist_creation_number)
+        self.Label_Nb.grid(row=3,column=1)
+
+        self.FrameSearch = Frame(self, bd=5, relief="raise")
+
+        self.CanvasSearch = Canvas(self.FrameSearch)
+        self.viewport = Frame(self.CanvasSearch, width=300)
+        self.Search_scrollbar = Scrollbar(self.FrameSearch, orient='vertical', command=self.CanvasSearch.yview)
+        self.CanvasSearch.configure(yscrollcommand=self.Search_scrollbar.set)
+        self.Search_scrollbar.pack(side=RIGHT, fill=Y)
+        self.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
+        self.Search_window = self.CanvasSearch.create_window((100,0), window=self.viewport, anchor=NW, tags="self.viewport")
+        self.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+        self.FrameSearch.grid(row=4,column=0,columnspan=2)
+
+        self.buttonleave = Button(self, text="Fermer", command=self.destroy)
+        self.buttonleave.grid(row=7,column=0)
+
+        self.buttonadd = Button(self, text="Confirmer", command=lambda:confirm_edit(fen=self, Name=self.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=self.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get(), oldName=self.oldName))
+        self.buttonadd.grid(row=7,column=1)
+
+        for widget in self.viewport.winfo_children():
+            widget.destroy()
+        curseur.execute(sql_search_music, ('%', '%'))
+        search_result = curseur.fetchall()
+        for i in search_result:
+            MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
+
+    def OnFrameConfigure(self, event):
         self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
-
-    edit_win = Toplevel()
-
-    edit_win.Name = StringVar()
-    edit_win.Genre = StringVar()
-
-    edit_win.Name.set(Name)
-    edit_win.Genre.set(Genre)
-    edit_win.oldName = Name
-
-    List_tempo = []
-    for i in List:
-        List_tempo.append( [ i[0],i[1] ] )
-
-    f.frames[Ajout].List_playlist_creation=(List_tempo)
-    f.frames[Ajout].List_playlist_creation_number.set(Nb)
-
-
-
-    Label(edit_win, text="Editer une playlist", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
-
-    Label(edit_win, text="Nom :").grid(row=1,column=0)
-    edit_win.EntryName = Entry(edit_win, textvariable=edit_win.Name)
-    edit_win.EntryName.grid(row=1,column=1)
-
-    Label(edit_win, text="Genre :").grid(row=2,column=0)
-    edit_win.EntryGenre = Entry(edit_win, textvariable=edit_win.Genre)
-    edit_win.EntryGenre.grid(row=2,column=1)
-
-    Label(edit_win, text="Nombre de musiques :").grid(row=3,column=0)
-    edit_win.Label_Nb = Label(edit_win, textvariable=f.frames[Ajout].List_playlist_creation_number)
-    edit_win.Label_Nb.grid(row=3,column=1)
-
-    edit_win.FrameSearch = Frame(edit_win, bd=5, relief="raise")
-
-    edit_win.CanvasSearch = Canvas(edit_win.FrameSearch)
-    edit_win.viewport = Frame(edit_win.CanvasSearch, width=300)
-    edit_win.Search_scrollbar = Scrollbar(edit_win.FrameSearch, orient='vertical', command=edit_win.CanvasSearch.yview)
-    edit_win.CanvasSearch.configure(yscrollcommand=edit_win.Search_scrollbar.set)
-    edit_win.Search_scrollbar.pack(side=RIGHT, fill=Y)
-    edit_win.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
-    edit_win.Search_window = edit_win.CanvasSearch.create_window((100,0), window=edit_win.viewport, anchor=NW, tags="edit_win.viewport")
-    edit_win.viewport.bind("<Configure>", OnFrameConfigure(edit_win))
-
-    edit_win.FrameSearch.grid(row=4,column=0,columnspan=2)
-
-    edit_win.buttonleave = Button(edit_win, text="Fermer", command=edit_win.destroy)
-    edit_win.buttonleave.grid(row=7,column=0)
-
-    edit_win.buttonadd = Button(edit_win, text="Confirmer", command=lambda:confirm_edit(Name=edit_win.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=edit_win.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get(), oldName=edit_win.oldName))
-    edit_win.buttonadd.grid(row=7,column=1)
-
-    for widget in edit_win.viewport.winfo_children():
-        widget.destroy()
-    curseur.execute(sql_search_music, ('%', '%'))
-    search_result = curseur.fetchall()
-    for i in search_result:
-        MusicInfo(edit_win.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
 
 class Playlist(Frame):
 
@@ -563,9 +567,9 @@ class Player(Musique, Frame):
         Frame.__init__(self, parent)
         Musique.__init__(self)
 
-        volumecontrol = Scale(self, from_=100, to=0, orient=VERTICAL, command=self.set_vol)
-        volumecontrol.set(100)
-        volumecontrol.grid(row=1, column=4, columnspan=5)
+        self.volumecontrol = Scale(self, from_=100, to=0, orient=VERTICAL, command=self.set_vol)
+        self.volumecontrol.set(100)
+        self.volumecontrol.grid(row=2, column=4, columnspan=4)
 
         FrameImage = Frame(self, height=300, width=250)
         FrameImage.grid(row=1, rowspan=3, column=1, columnspan=3, sticky='nsew')
