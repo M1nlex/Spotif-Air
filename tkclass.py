@@ -109,9 +109,6 @@ def maj_playlist():
     for i in result_f:
         Playlist(Programme=f.frames[Recherche_Playlist].viewport, Name=i[0], Number=i[1], List=i[2], Genre=i[3], fenetre_de_retour=f.frames[Recherche_Playlist].Playlist_list, fenetre_playlist=f.frames[Recherche_Playlist].Playlist_Content)
 
-def maj_music():
-    pass
-
 def playlist_add_music(name, artist):
     if [name, artist] not in f.frames[Ajout].List_playlist_creation:
         f.frames[Ajout].List_playlist_creation.append([name, artist])
@@ -135,7 +132,6 @@ def confirm_edit(fen, Name, List, Genre, Nb, oldName):
         messagebox.showinfo("Succès", "La playlist a été modifiée, veuillez\nretourner aux playlists")
         maj_playlist()
         fen.destroy()
-
 
 class edit_playlist(Toplevel):
 
