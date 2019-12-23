@@ -1,5 +1,5 @@
 """Programatically interact with a Google Cloud Storage bucket."""
-from google.cloud import storage
+
 from pip._internal import main as pipmain
 from os import environ
 import os
