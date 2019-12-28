@@ -6,7 +6,10 @@ import threading
 import time
 import sqlite3
 import os
+import os.path
+import shutil
 from tkinter import messagebox
+from tkinter.filedialog import askopenfilename
 import cloudstorage
 
 try:
@@ -59,6 +62,8 @@ def return_to_playlist(self, fenetre_de_retour):
 def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
     if Nom == "" or Lien == "" or Compositeur == "" or Genre == "" or not (".ogg" in Lien):
         messagebox.showerror("Erreur", "Information(s) manquante(s)")
+    elif not os.path.exists(Lien) and not os.path.isfile(Lien):
+        messagebox.showerror("Erreur", "Le fichier de la musique n'existe pas, ou le lien est erroné")
     elif curseur.execute(sql_test_music_exist, (Nom, Compositeur, Album, Genre)).fetchone()[0] == 1:
         messagebox.showwarning("Erreur", "Ce morceau existe déjà dans la base de donnée")
     else:
@@ -69,6 +74,10 @@ def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
             curseur.execute("INSERT INTO Image(Image_Name, Image_Link) VALUES (?, ?)", (Album, Image))
         if curseur.execute("SELECT COUNT(1) FROM Genre WHERE Genre_Name=?", (Genre,)).fetchone()[0] == 0:
             curseur.execute("INSERT INTO Genre(Genre_Name) VALUES (?)", (Genre,))
+        if not "Song/" in Lien:
+            newlien = "Song/"+Nom+"_"+Compositeur+".ogg"
+            shutil.copy(Lien, newlien)
+            Lien = newlien
         curseur.execute(sql_add_music, (Nom, Lien, Compositeur, Album, Album, Genre))
         connexion.commit()
         messagebox.showinfo("Succès", "la musique a bien été ajoutée à la base de donnée.")
@@ -681,50 +690,56 @@ class Ajout(Frame):
         self.Button_add_playlist.pack(side=TOP, fill=BOTH, expand=1)
 
     def ajout_add_music(self):
-        fen_add_music = Toplevel()
+        self.fen_add_music = Toplevel()
 
-        fen_add_music.Name = StringVar()
-        fen_add_music.Lien = StringVar()
-        fen_add_music.Compositeur = StringVar()
-        fen_add_music.Album = StringVar()
-        fen_add_music.Image = StringVar()
-        fen_add_music.Genre = StringVar()
+        self.fen_add_music.Name = StringVar()
+        self.fen_add_music.Lien = StringVar()
+        self.fen_add_music.Compositeur = StringVar()
+        self.fen_add_music.Album = StringVar()
+        self.fen_add_music.Image = StringVar()
+        self.fen_add_music.Genre = StringVar()
 
-        Label(fen_add_music, text="Ajouter une musique", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
+        Label(self.fen_add_music, text="Ajouter une musique", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
 
-        Label(fen_add_music, text="Nom :").grid(row=1, column=0)
-        fen_add_music.EntryName = Entry(fen_add_music, textvariable=fen_add_music.Name)
-        fen_add_music.EntryName.grid(row=1, column=1)
+        Label(self.fen_add_music, text="Nom :").grid(row=1, column=0)
+        self.fen_add_music.EntryName = Entry(self.fen_add_music, textvariable=self.fen_add_music.Name)
+        self.fen_add_music.EntryName.grid(row=1, column=1)
 
-        Label(fen_add_music, text="Lien (fichier .ogg) :").grid(row=2, column=0)
-        fen_add_music.EntryLien = Entry(fen_add_music, textvariable=fen_add_music.Lien)
-        fen_add_music.EntryLien.grid(row=2, column=1)
+        self.fen_add_music.Lienbutton = Button(self.fen_add_music, text="Lien (fichier .ogg) :", command=self.file_opener)
+        self.fen_add_music.Lienbutton.grid(row=2, column=0)
+        self.fen_add_music.EntryLien = Entry(self.fen_add_music, textvariable=self.fen_add_music.Lien)
+        self.fen_add_music.EntryLien.grid(row=2, column=1)
 
-        Label(fen_add_music, text="Compositeur :").grid(row=3, column=0)
-        fen_add_music.EntryCompositeur = Entry(fen_add_music, textvariable=fen_add_music.Compositeur)
-        fen_add_music.EntryCompositeur.grid(row=3, column=1)
+        Label(self.fen_add_music, text="Compositeur :").grid(row=3, column=0)
+        self.fen_add_music.EntryCompositeur = Entry(self.fen_add_music, textvariable=self.fen_add_music.Compositeur)
+        self.fen_add_music.EntryCompositeur.grid(row=3, column=1)
 
-        Label(fen_add_music, text="Album :").grid(row=4, column=0)
-        fen_add_music.EntryAlbum = Entry(fen_add_music, textvariable=fen_add_music.Album)
-        fen_add_music.EntryAlbum.grid(row=4, column=1)
+        Label(self.fen_add_music, text="Album :").grid(row=4, column=0)
+        self.fen_add_music.EntryAlbum = Entry(self.fen_add_music, textvariable=self.fen_add_music.Album)
+        self.fen_add_music.EntryAlbum.grid(row=4, column=1)
 
-        Label(fen_add_music, text="Image :").grid(row=5, column=0)
-        fen_add_music.EntryImage = Entry(fen_add_music, textvariable=fen_add_music.Image)
-        fen_add_music.EntryImage.grid(row=5, column=1)
+        Label(self.fen_add_music, text="Image :").grid(row=5, column=0)
+        self.fen_add_music.EntryImage = Entry(self.fen_add_music, textvariable=self.fen_add_music.Image)
+        self.fen_add_music.EntryImage.grid(row=5, column=1)
 
-        Label(fen_add_music, text="Genre :").grid(row=6, column=0)
-        fen_add_music.EntryGenre = Entry(fen_add_music, textvariable=fen_add_music.Genre)
-        fen_add_music.EntryGenre.grid(row=6, column=1)
+        Label(self.fen_add_music, text="Genre :").grid(row=6, column=0)
+        self.fen_add_music.EntryGenre = Entry(self.fen_add_music, textvariable=self.fen_add_music.Genre)
+        self.fen_add_music.EntryGenre.grid(row=6, column=1)
 
-        fen_add_music.buttonleave = Button(fen_add_music, text="Fermer", command=fen_add_music.destroy)
-        fen_add_music.buttonleave.grid(row=7, column=0)
+        self.fen_add_music.buttonleave = Button(self.fen_add_music, text="Fermer", command=self.fen_add_music.destroy)
+        self.fen_add_music.buttonleave.grid(row=7, column=0)
 
-        fen_add_music.buttonadd = Button(fen_add_music, text="Ajouter",
-                                         command=lambda: add_music(fen_add_music.Name.get(), fen_add_music.Lien.get(),
-                                                                   fen_add_music.Compositeur.get(),
-                                                                   fen_add_music.Album.get(), fen_add_music.Image.get(),
-                                                                   fen_add_music.Genre.get()))
-        fen_add_music.buttonadd.grid(row=7, column=1)
+        self.fen_add_music.buttonadd = Button(self.fen_add_music, text="Ajouter",
+                                         command=lambda: add_music(self.fen_add_music.Name.get(), self.fen_add_music.Lien.get(),
+                                                                   self.fen_add_music.Compositeur.get(),
+                                                                   self.fen_add_music.Album.get(), self.fen_add_music.Image.get(),
+                                                                   self.fen_add_music.Genre.get()))
+        self.fen_add_music.buttonadd.grid(row=7, column=1)
+
+    def file_opener(self):
+        self.fen_add_music.Lien.set(askopenfilename())
+        self.fen_add_music.tkraise()
+        # filetypes=FILETYPES
 
     def ajout_add_playlist(self):
 
