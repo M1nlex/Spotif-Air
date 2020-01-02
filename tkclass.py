@@ -6,7 +6,10 @@ import threading
 import time
 import sqlite3
 import os
+import os.path
+import shutil
 from tkinter import messagebox
+from tkinter.filedialog import askopenfilename
 import cloudstorage
 
 try:
@@ -59,6 +62,8 @@ def return_to_playlist(self, fenetre_de_retour):
 def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
     if Nom == "" or Lien == "" or Compositeur == "" or Genre == "" or not (".ogg" in Lien):
         messagebox.showerror("Erreur", "Information(s) manquante(s)")
+    elif not os.path.exists(Lien) and not os.path.isfile(Lien):
+        messagebox.showerror("Erreur", "Le fichier de la musique n'existe pas, ou le lien est erroné")
     elif curseur.execute(sql_test_music_exist, (Nom, Compositeur, Album, Genre)).fetchone()[0] == 1:
         messagebox.showwarning("Erreur", "Ce morceau existe déjà dans la base de donnée")
     else:
@@ -69,6 +74,10 @@ def add_music(Nom, Lien, Compositeur, Album, Image, Genre):
             curseur.execute("INSERT INTO Image(Image_Name, Image_Link) VALUES (?, ?)", (Album, Image))
         if curseur.execute("SELECT COUNT(1) FROM Genre WHERE Genre_Name=?", (Genre,)).fetchone()[0] == 0:
             curseur.execute("INSERT INTO Genre(Genre_Name) VALUES (?)", (Genre,))
+        if not "Song/" in Lien:
+            newlien = "Song/"+Nom+"_"+Compositeur+".ogg"
+            shutil.copy(Lien, newlien)
+            Lien = newlien
         curseur.execute(sql_add_music, (Nom, Lien, Compositeur, Album, Album, Genre))
         connexion.commit()
         messagebox.showinfo("Succès", "la musique a bien été ajoutée à la base de donnée.")
@@ -109,9 +118,6 @@ def maj_playlist():
     for i in result_f:
         Playlist(Programme=f.frames[Recherche_Playlist].viewport, Name=i[0], Number=i[1], List=i[2], Genre=i[3], fenetre_de_retour=f.frames[Recherche_Playlist].Playlist_list, fenetre_playlist=f.frames[Recherche_Playlist].Playlist_Content)
 
-def maj_music():
-    pass
-
 def playlist_add_music(name, artist):
     if [name, artist] not in f.frames[Ajout].List_playlist_creation:
         f.frames[Ajout].List_playlist_creation.append([name, artist])
@@ -120,7 +126,7 @@ def playlist_add_music(name, artist):
         f.frames[Ajout].List_playlist_creation.remove([name, artist])
         f.frames[Ajout].List_playlist_creation_number.set(f.frames[Ajout].List_playlist_creation_number.get()-1)
 
-def confirm_edit(Name, List, Genre, Nb, oldName):
+def confirm_edit(fen, Name, List, Genre, Nb, oldName):
     String_to_send = ""
     for i in List:
         String_to_send = String_to_send + ";" + str(curseur.execute( "SELECT Music_Id FROM Musique WHERE Music_Name= ? AND Compo_Id = (SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ?)", (i[0],i[1]) ).fetchone()[0])
@@ -134,70 +140,72 @@ def confirm_edit(Name, List, Genre, Nb, oldName):
         curseur.execute(sql_edit_playlsit,(Name, String_to_send, Genre, Nb, oldName))
         messagebox.showinfo("Succès", "La playlist a été modifiée, veuillez\nretourner aux playlists")
         maj_playlist()
+        fen.destroy()
 
-def edit_playlist(Name, List, Genre, Nb):
+class edit_playlist(Toplevel):
 
-    def OnFrameConfigure(selfa):
-        selfa.configure(scrollregion=selfa.bbox("all"))
+    def __init__(self, Name, List, Genre, Nb):
 
-    edit_win = Toplevel()
+        Toplevel.__init__(self)
 
-    edit_win.Name = StringVar()
-    edit_win.Genre = StringVar()
+        self.Name = StringVar()
+        self.Genre = StringVar()
 
-    edit_win.Name.set(Name)
-    edit_win.Genre.set(Genre)
-    edit_win.oldName = Name
+        self.Name.set(Name)
+        self.Genre.set(Genre)
+        self.oldName = Name
 
-    List_tempo = []
-    for i in List:
-        List_tempo.append( [ i[0],i[1] ] )
+        List_tempo = []
+        for i in List:
+            List_tempo.append( [ i[0],i[1] ] )
 
-    f.frames[Ajout].List_playlist_creation=(List_tempo)
-    f.frames[Ajout].List_playlist_creation_number.set(Nb)
-
-
-
-    Label(edit_win, text="Editer une playlist", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
-
-    Label(edit_win, text="Nom :").grid(row=1,column=0)
-    edit_win.EntryName = Entry(edit_win, textvariable=edit_win.Name)
-    edit_win.EntryName.grid(row=1,column=1)
-
-    Label(edit_win, text="Genre :").grid(row=2,column=0)
-    edit_win.EntryGenre = Entry(edit_win, textvariable=edit_win.Genre)
-    edit_win.EntryGenre.grid(row=2,column=1)
-
-    Label(edit_win, text="Nombre de musiques :").grid(row=3,column=0)
-    edit_win.Label_Nb = Label(edit_win, textvariable=f.frames[Ajout].List_playlist_creation_number)
-    edit_win.Label_Nb.grid(row=3,column=1)
-
-    edit_win.FrameSearch = Frame(edit_win, bd=5, relief="raise")
-
-    edit_win.CanvasSearch = Canvas(edit_win.FrameSearch)
-    edit_win.viewport = Frame(edit_win.CanvasSearch, width=300)
-    edit_win.Search_scrollbar = Scrollbar(edit_win.FrameSearch, orient='vertical', command=edit_win.CanvasSearch.yview)
-    edit_win.CanvasSearch.configure(yscrollcommand=edit_win.Search_scrollbar.set)
-    edit_win.Search_scrollbar.pack(side=RIGHT, fill=Y)
-    edit_win.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
-    edit_win.Search_window = edit_win.CanvasSearch.create_window((100,0), window=edit_win.viewport, anchor=NW, tags="edit_win.viewport")
+        f.frames[Ajout].List_playlist_creation=(List_tempo)
+        f.frames[Ajout].List_playlist_creation_number.set(Nb)
 
 
-    edit_win.FrameSearch.grid(row=4,column=0,columnspan=2)
 
-    edit_win.buttonleave = Button(edit_win, text="Fermer", command=edit_win.destroy)
-    edit_win.buttonleave.grid(row=7,column=0)
+        Label(self, text="Editer une playlist", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
 
-    edit_win.buttonadd = Button(edit_win, text="Confirmer", command=lambda:confirm_edit(Name=edit_win.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=edit_win.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get(), oldName=edit_win.oldName))
-    edit_win.buttonadd.grid(row=7,column=1)
+        Label(self, text="Nom :").grid(row=1,column=0)
+        self.EntryName = Entry(self, textvariable=self.Name)
+        self.EntryName.grid(row=1,column=1)
 
-    for widget in edit_win.viewport.winfo_children():
-        widget.destroy()
-    curseur.execute(sql_search_music, ('%', '%'))
-    search_result = curseur.fetchall()
-    for i in search_result:
-        MusicInfo(edit_win.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
-    edit_win.viewport.bind("<Configure>", OnFrameConfigure(selfa=edit_win.CanvasSearch))
+        Label(self, text="Genre :").grid(row=2,column=0)
+        self.EntryGenre = Entry(self, textvariable=self.Genre)
+        self.EntryGenre.grid(row=2,column=1)
+
+        Label(self, text="Nombre de musiques :").grid(row=3,column=0)
+        self.Label_Nb = Label(self, textvariable=f.frames[Ajout].List_playlist_creation_number)
+        self.Label_Nb.grid(row=3,column=1)
+
+        self.FrameSearch = Frame(self, bd=5, relief="raise")
+
+        self.CanvasSearch = Canvas(self.FrameSearch)
+        self.viewport = Frame(self.CanvasSearch, width=300)
+        self.Search_scrollbar = Scrollbar(self.FrameSearch, orient='vertical', command=self.CanvasSearch.yview)
+        self.CanvasSearch.configure(yscrollcommand=self.Search_scrollbar.set)
+        self.Search_scrollbar.pack(side=RIGHT, fill=Y)
+        self.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
+        self.Search_window = self.CanvasSearch.create_window((100,0), window=self.viewport, anchor=NW, tags="self.viewport")
+        self.viewport.bind("<Configure>", self.OnFrameConfigure)
+
+        self.FrameSearch.grid(row=4,column=0,columnspan=2)
+
+        self.buttonleave = Button(self, text="Fermer", command=self.destroy)
+        self.buttonleave.grid(row=7,column=0)
+
+        self.buttonadd = Button(self, text="Confirmer", command=lambda:confirm_edit(fen=self, Name=self.Name.get(), List=f.frames[Ajout].List_playlist_creation, Genre=self.Genre.get(), Nb=f.frames[Ajout].List_playlist_creation_number.get(), oldName=self.oldName))
+        self.buttonadd.grid(row=7,column=1)
+
+        for widget in self.viewport.winfo_children():
+            widget.destroy()
+        curseur.execute(sql_search_music, ('%', '%'))
+        search_result = curseur.fetchall()
+        for i in search_result:
+            MusicInfo(self.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
+
+    def OnFrameConfigure(self, event):
+        self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
 
 class Playlist(Frame):
 
@@ -564,9 +572,9 @@ class Player(Musique, Frame):
         Frame.__init__(self, parent)
         Musique.__init__(self)
 
-        volumecontrol = Scale(self, from_=100, to=0, orient=VERTICAL, command=self.set_vol)
-        volumecontrol.set(100)
-        volumecontrol.grid(row=1, column=4, columnspan=5)
+        self.volumecontrol = Scale(self, from_=100, to=0, orient=VERTICAL, command=self.set_vol)
+        self.volumecontrol.set(100)
+        self.volumecontrol.grid(row=2, column=4, columnspan=4)
 
         FrameImage = Frame(self, height=300, width=250)
         FrameImage.grid(row=1, rowspan=3, column=1, columnspan=3, sticky='nsew')
@@ -682,50 +690,56 @@ class Ajout(Frame):
         self.Button_add_playlist.pack(side=TOP, fill=BOTH, expand=1)
 
     def ajout_add_music(self):
-        fen_add_music = Toplevel()
+        self.fen_add_music = Toplevel()
 
-        fen_add_music.Name = StringVar()
-        fen_add_music.Lien = StringVar()
-        fen_add_music.Compositeur = StringVar()
-        fen_add_music.Album = StringVar()
-        fen_add_music.Image = StringVar()
-        fen_add_music.Genre = StringVar()
+        self.fen_add_music.Name = StringVar()
+        self.fen_add_music.Lien = StringVar()
+        self.fen_add_music.Compositeur = StringVar()
+        self.fen_add_music.Album = StringVar()
+        self.fen_add_music.Image = StringVar()
+        self.fen_add_music.Genre = StringVar()
 
-        Label(fen_add_music, text="Ajouter une musique", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
+        Label(self.fen_add_music, text="Ajouter une musique", font=('Segoe UI Light', '20')).grid(row=0, column=0, columnspan=2)
 
-        Label(fen_add_music, text="Nom :").grid(row=1, column=0)
-        fen_add_music.EntryName = Entry(fen_add_music, textvariable=fen_add_music.Name)
-        fen_add_music.EntryName.grid(row=1, column=1)
+        Label(self.fen_add_music, text="Nom :").grid(row=1, column=0)
+        self.fen_add_music.EntryName = Entry(self.fen_add_music, textvariable=self.fen_add_music.Name)
+        self.fen_add_music.EntryName.grid(row=1, column=1)
 
-        Label(fen_add_music, text="Lien (fichier .ogg) :").grid(row=2, column=0)
-        fen_add_music.EntryLien = Entry(fen_add_music, textvariable=fen_add_music.Lien)
-        fen_add_music.EntryLien.grid(row=2, column=1)
+        self.fen_add_music.Lienbutton = Button(self.fen_add_music, text="Lien (fichier .ogg) :", command=self.file_opener)
+        self.fen_add_music.Lienbutton.grid(row=2, column=0)
+        self.fen_add_music.EntryLien = Entry(self.fen_add_music, textvariable=self.fen_add_music.Lien)
+        self.fen_add_music.EntryLien.grid(row=2, column=1)
 
-        Label(fen_add_music, text="Compositeur :").grid(row=3, column=0)
-        fen_add_music.EntryCompositeur = Entry(fen_add_music, textvariable=fen_add_music.Compositeur)
-        fen_add_music.EntryCompositeur.grid(row=3, column=1)
+        Label(self.fen_add_music, text="Compositeur :").grid(row=3, column=0)
+        self.fen_add_music.EntryCompositeur = Entry(self.fen_add_music, textvariable=self.fen_add_music.Compositeur)
+        self.fen_add_music.EntryCompositeur.grid(row=3, column=1)
 
-        Label(fen_add_music, text="Album :").grid(row=4, column=0)
-        fen_add_music.EntryAlbum = Entry(fen_add_music, textvariable=fen_add_music.Album)
-        fen_add_music.EntryAlbum.grid(row=4, column=1)
+        Label(self.fen_add_music, text="Album :").grid(row=4, column=0)
+        self.fen_add_music.EntryAlbum = Entry(self.fen_add_music, textvariable=self.fen_add_music.Album)
+        self.fen_add_music.EntryAlbum.grid(row=4, column=1)
 
-        Label(fen_add_music, text="Image :").grid(row=5, column=0)
-        fen_add_music.EntryImage = Entry(fen_add_music, textvariable=fen_add_music.Image)
-        fen_add_music.EntryImage.grid(row=5, column=1)
+        Label(self.fen_add_music, text="Image :").grid(row=5, column=0)
+        self.fen_add_music.EntryImage = Entry(self.fen_add_music, textvariable=self.fen_add_music.Image)
+        self.fen_add_music.EntryImage.grid(row=5, column=1)
 
-        Label(fen_add_music, text="Genre :").grid(row=6, column=0)
-        fen_add_music.EntryGenre = Entry(fen_add_music, textvariable=fen_add_music.Genre)
-        fen_add_music.EntryGenre.grid(row=6, column=1)
+        Label(self.fen_add_music, text="Genre :").grid(row=6, column=0)
+        self.fen_add_music.EntryGenre = Entry(self.fen_add_music, textvariable=self.fen_add_music.Genre)
+        self.fen_add_music.EntryGenre.grid(row=6, column=1)
 
-        fen_add_music.buttonleave = Button(fen_add_music, text="Fermer", command=fen_add_music.destroy)
-        fen_add_music.buttonleave.grid(row=7, column=0)
+        self.fen_add_music.buttonleave = Button(self.fen_add_music, text="Fermer", command=self.fen_add_music.destroy)
+        self.fen_add_music.buttonleave.grid(row=7, column=0)
 
-        fen_add_music.buttonadd = Button(fen_add_music, text="Ajouter",
-                                         command=lambda: add_music(fen_add_music.Name.get(), fen_add_music.Lien.get(),
-                                                                   fen_add_music.Compositeur.get(),
-                                                                   fen_add_music.Album.get(), fen_add_music.Image.get(),
-                                                                   fen_add_music.Genre.get()))
-        fen_add_music.buttonadd.grid(row=7, column=1)
+        self.fen_add_music.buttonadd = Button(self.fen_add_music, text="Ajouter",
+                                         command=lambda: add_music(self.fen_add_music.Name.get(), self.fen_add_music.Lien.get(),
+                                                                   self.fen_add_music.Compositeur.get(),
+                                                                   self.fen_add_music.Album.get(), self.fen_add_music.Image.get(),
+                                                                   self.fen_add_music.Genre.get()))
+        self.fen_add_music.buttonadd.grid(row=7, column=1)
+
+    def file_opener(self):
+        self.fen_add_music.Lien.set(askopenfilename())
+        self.fen_add_music.tkraise()
+        # filetypes=FILETYPES
 
     def ajout_add_playlist(self):
 
@@ -788,7 +802,7 @@ class Stat(Frame):
         self.framesearch_entry_button = Frame(self)
         self.framesearch_entry_button.pack(side=TOP, fill=X, expand=1, anchor=N)
         Label(self.framesearch_entry_button, text='Top : ').pack(side=LEFT)
-        self.Entrysearch = ttk.Combobox(self.framesearch_entry_button, values=["Music", "Artiste", "Genre"])
+        self.Entrysearch = ttk.Combobox(self.framesearch_entry_button, values=["Musique", "Artiste", "Genre"])
         self.Entrysearch.pack(side=LEFT, fill=X, expand=1)
 
         self.buttonsearch = Button(self.framesearch_entry_button, text="Recherche", command=self.top10)
