@@ -126,7 +126,7 @@ def confirm_edit(Name, List, Genre, Nb, oldName):
         String_to_send = String_to_send + ";" + str(curseur.execute( "SELECT Music_Id FROM Musique WHERE Music_Name= ? AND Compo_Id = (SELECT Compo_Id FROM Compositeur WHERE Compo_Name= ?)", (i[0],i[1]) ).fetchone()[0])
     if String_to_send[0]==";":
         String_to_send = String_to_send[1:]
-    if Name=="" or Genre == "":
+    if Name=="" or Genre == "" or List==[]:
         messagebox.showerror("Erreur", "Il manque des informations pour changer la playlist")
     elif curseur.execute(sql_test_playlist_exist_2, (Name, String_to_send, Genre, Nb) ).fetchone()[0] == 1:
         messagebox.showwarning("Erreur", "Une playlist du même nom existe déjà dans la base de donnée")
@@ -137,8 +137,8 @@ def confirm_edit(Name, List, Genre, Nb, oldName):
 
 def edit_playlist(Name, List, Genre, Nb):
 
-    def OnFrameConfigure(self):
-        self.CanvasSearch.configure(scrollregion=self.CanvasSearch.bbox("all"))
+    def OnFrameConfigure(selfa):
+        selfa.configure(scrollregion=selfa.bbox("all"))
 
     edit_win = Toplevel()
 
@@ -181,7 +181,7 @@ def edit_playlist(Name, List, Genre, Nb):
     edit_win.Search_scrollbar.pack(side=RIGHT, fill=Y)
     edit_win.CanvasSearch.pack(side=LEFT, fill=BOTH, expand=1)
     edit_win.Search_window = edit_win.CanvasSearch.create_window((100,0), window=edit_win.viewport, anchor=NW, tags="edit_win.viewport")
-    edit_win.viewport.bind("<Configure>", OnFrameConfigure(edit_win))
+
 
     edit_win.FrameSearch.grid(row=4,column=0,columnspan=2)
 
@@ -197,6 +197,7 @@ def edit_playlist(Name, List, Genre, Nb):
     search_result = curseur.fetchall()
     for i in search_result:
         MusicInfo(edit_win.viewport, Name=i[0], Artist=i[1], Nb_in_Playlist=0, List_for_playlist=[i], add_option=1)
+    edit_win.viewport.bind("<Configure>", OnFrameConfigure(selfa=edit_win.CanvasSearch))
 
 class Playlist(Frame):
 
