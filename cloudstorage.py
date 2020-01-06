@@ -10,16 +10,13 @@ except ModuleNotFoundError:
     pipmain(['install', 'google-cloud-storage'])
     from google.cloud import storage
 
-
-
-bucketName = environ.get('spotif-air')
+bucketName = environ.get('spotifair')
 bucketFolder = environ.get('Song')
 localFolder = environ.get('file')
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "spotif-air-1576781750391-7c9f4663cb4b.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "Spotifair-df3788c7a929.json"
 storage_client = storage.Client()
-bucket = storage_client.get_bucket('spotif-air')
-
+bucket = storage_client.get_bucket('spotifair')
 
 def upload_files(bucketName, bucketFolder, localFolder, name):
     """Upload files to GCP bucket."""
@@ -39,7 +36,7 @@ def download_random_file(bucketName, bucketFolder, localFolder, name):
     fileList = list_files(bucketName)
 
     for i in range(len(fileList)):
-        print(fileList[i], str(name))
+        #print(fileList[i], str(name))
         if fileList[i] == str(name):
             song = i
             break

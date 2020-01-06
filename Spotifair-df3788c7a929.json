@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "spotifair",
+  "private_key_id": "df3788c7a929a608f7d8a74f81eb5e10e3222e0e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDT8XLKP+p7cB2K\nH0WSXCjny77l6XleyGiT7D0gQL6zV6LkRhzMh1guPkduw0EnyKuAS0WBs/drbAn9\n3AB+KGd1K+QrNMJYgTYsCflbenrKah0Ld+1Q/zuVAkfs0kL8iM6fRAQHWUPe7edJ\n2UmqwAk3NQKrvn3vvyW7KMKNd56jcjSIcdxrbOnEtuHgvkYRGPi8b2PQVOMlDsii\nkj0GBgi/AI/mu3Xmq6MM6/gAxs3q/zgJHART84909vK6UksgeEJ+YedGe/FrrkJm\ndiyxOkeLrAQAcl4o/miS+4NQZ0mLHfThALvSgRGxzQE2HysNPy6ABSbPgd/t1B6u\nQUXwEFvRAgMBAAECggEAF3SwRIvgUnrs+f1OAM2sRUL6RI2bPg8l68EIXsprkIOR\nZnwP8d7EtpFz7GE1k8aUnGU4MwuMxVm2nV68uzmTgZcy8EktfQgHy8Xqz+H1NvOZ\ndUx3ejBVEr+m4CHBAhvN6jhnzbxmU4S2xSiEC56nJnH6crFpVKAt99Gh/nAPoXzt\nlBcFdjgvy5RW2EAA31g1WbR7bVKXIpT29jQQIKY4r9wXhyHi3F/lXzhCYPyNzm4Z\nhZ6kmw+cBl+qO5IXTPwfAL5LR+m0DBofQ5ZemNZmVCxLe+b4goSKCs60ldRvIKT+\nPzFJCBVhcAgPjgD3ULiSKy5JXohmBxL4zI72LtFkQQKBgQDyZEKZUwPBF6b2zw7X\n8sLplfe3wRoGHNV80KfSCig/7IULbR4Emvors5P0Uhnd5GaK7RZfaKo9V87bWNp9\nlGQHj55yOJ98/8XVsa0VLbzlkPu/uk8bhscvqkkCOAcNk29XuapPiuG2+CX4n8yP\nuwZTa2tJoHQa5RvIDURc3yr+WQKBgQDf15JaYc2TIt/mq+7aLoi4JjnvaSCoZmyz\n771ebcDdibXiCUEJ3rVkmlYWWFgzKKj8CmdVudRY/0Wl03Y4GjM4ZWrUKzpOu4d0\nThZ9KHZRVbG51k4GMKrm55ytenZLq9zR4QJ7Vom8KYW6nduK/YQuSALHYJ4A6gxP\nujua0rhKOQKBgB7CxITquRY/Jyw5OLwFDeFQ6+AA/Il8DUfKvxFzwoniPTwm++E/\nvbHgF02xQaEcRDsrPWScRsaEJzdE/m1jcJJZEpWSRAM7/mJRKxL9+/PyQ1Cglzt6\nDjspVByY+aQqar3qTQfNKznqIf98YBx5cqMRhcsRNsrW+oCX1m4m0DD5AoGBALMN\n9fxmj9NK6l/S2NWes67apS1losISbJHjDFAk60pLhjqxvFzw0ZkP/B0TvjnuJH64\ns8BXTg2C5Wuoo8Bs9NwABFyD17hzOf9HF6Y2X67gJbLKQs+gzpS2YRZEB6ywZYtd\numZ+6t6hOF/3Nk8QTFPZNp/WIY4Jqp98EYHfXZvBAoGARMR67YZkyBaj8Hwht8AC\nkDJKNb27WPZesCQVQONYnbRCgoQFNeZTHiGBMOaK65HzVvJDGRahTaWtsTtI8brU\nE+TdQdTZ2lRjMNIWayzwgFvGAu2zv7t8jdIKZFsHRV/fFEKImvkbTFffmTShTKLh\ntFhPL85rqySecGEvIsVI1WM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "lecteur@spotifair.iam.gserviceaccount.com",
+  "client_id": "111690372737238420840",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/lecteur%40spotifair.iam.gserviceaccount.com"
+}
